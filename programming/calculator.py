@@ -43,6 +43,36 @@ class BadEquationError(Exception):
     pass
 
 
+def binary_operation(stack, op):
+    if len(stack) < 2:
+        raise BadEquationError("Not enough numbers.")
+
+    a, b = stack.pop(), stack.pop()
+
+    res = binary_ops[op](b, a)
+    print("Evaluating: %.2f %s %.2f = %.2f" % (b, op, a, res))
+
+    return res
+
+
+def unary_operation(stack, op):
+    if not stack:
+        raise BadEquationError("Not enough numbers.")
+
+    a = stack.pop()
+    res = unary_ops[op](a)
+    print("Evaluating: %.2f %s = %.2f" % (a, op, res))
+
+    return res
+
+
+def add_to_stack(stack, s):
+    try:
+        stack.append(float(s))
+    except ValueError:
+        raise BadEquationError("Cannot process equation at point: %s" % s)
+
+
 def calculate(math_equation: str):
     stack = []
 
@@ -51,38 +81,20 @@ def calculate(math_equation: str):
             stack.append(math_constants[s])
 
         elif s in binary_ops:
+            op = binary_operation(stack, s)
+            stack.append(op)
 
-            if len(stack) < 2:
-                raise BadEquationError("Not enough numbers.")
-
-            a, b = stack.pop(), stack.pop()
-
-            operation = binary_ops[s](b, a)
-
-            stack.append(operation)
         elif s in unary_ops:
+            op = unary_operation(stack, s)
+            stack.append(op)
 
-            if not stack:
-                raise BadEquationError("Not enough numbers.")
-
-            a = stack.pop()
-
-            operation = unary_ops[s](a)
-
-            stack.append(operation)
         else:
-            try:
-                stack.append(int(s))
-            except ValueError:
-                raise BadEquationError("Invalid character: %s" % s)
+            add_to_stack(stack, s)
 
     if len(stack) > 1:
         raise BadEquationError("Too many numbers in stack left: %s " % stack)
 
-    result = stack.pop()
-
-    print("%s is %s" % (math_equation, result))
-    return result
+    return stack.pop()
 
 
 def test_valid():
@@ -130,7 +142,8 @@ def test_invalid():
 if __name__ == '__main__':
     while True:
         try:
-            equation = input("Enter equation RPN: ")
+            equation = input("Enter equation (using RPN): ")
+            print()
 
             if equation in ["", "quit", "exit", "close"]:
                 break
@@ -139,7 +152,8 @@ if __name__ == '__main__':
                 test_valid()
                 test_invalid()
             else:
-                calculate(equation)
+                result = calculate(equation)
+                print("\nEquation result: %.2f\n" % result)
 
         except BadEquationError as e:
             print(e)
