@@ -9,10 +9,11 @@
 Група: ІС-зп81
 """
 
+import math
 import operator
 
 # Тут задаються символи, які калькулятор буде розпізнавати
-ops = {
+binary_ops = {
     '+': operator.add,
     '-': operator.sub,
     '−': operator.sub,
@@ -22,6 +23,19 @@ ops = {
     '//': operator.floordiv,
     '%': operator.mod,
     '^': operator.pow,
+    "log": math.log,
+}
+
+unary_ops = {
+    "sin": math.sin,
+    "cos": math.cos,
+    "!": math.factorial,
+    "exp": math.exp
+}
+
+math_constants = {
+    "e": math.e,
+    "pi": math.pi
 }
 
 
@@ -33,14 +47,27 @@ def calculate(math_equation: str):
     stack = []
 
     for s in math_equation.split():
-        if s in ops:
+        if s in math_constants:
+            stack.append(math_constants[s])
+
+        elif s in binary_ops:
 
             if len(stack) < 2:
                 raise BadEquationError("Not enough numbers.")
 
             a, b = stack.pop(), stack.pop()
 
-            operation = ops[s](b, a)
+            operation = binary_ops[s](b, a)
+
+            stack.append(operation)
+        elif s in unary_ops:
+
+            if not stack:
+                raise BadEquationError("Not enough numbers.")
+
+            a = stack.pop()
+
+            operation = unary_ops[s](a)
 
             stack.append(operation)
         else:
