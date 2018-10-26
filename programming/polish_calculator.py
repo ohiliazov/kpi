@@ -70,58 +70,78 @@ class PolishCalculator:
         self.op_counter = 0
         self.stack = Stack()
 
+    def _load(self, item):
+        """ Load a number to stack
+        1. Convert a
+        :param item: string that represents float number
+        """
+        try:
+            item = float(item)
+        except ValueError:
+            raise EquationException(f"Invalid character: {item}")
+
+        self.stack.push(item)
+
+    def _binary(self, op):
+        """ Binary operation:
+        1. Take two numbers from stack
+        2. Perform binary operation on them
+        3. Push result to stack
+
+        :param item: string that represents binary operator
+        """
+        if self.stack.size < 2:
+            raise EquationException("Not enough items in stack for binary operation.")
+
+        b = self.stack.pop()
+        c = self.stack.pop()
+
+        result = BINARY_OPERATORS[op](c, b)
+        self.stack.push(result)
+        self.op_counter += 1
+
+        print(f"{self.op_counter}. {c:.2f} {op} {b:.2f} = {result:.2f}")
+
+    def _unary(self, op):
+        """ Unary operation:
+        1. Take one number from stack
+        2. Perform unary operation on it
+        3. Push result to stack
+
+        :param item: string that represents unary operator
+        """
+        if self.stack.size < 1:
+            raise EquationException("No items in stack.")
+
+        a = self.stack.pop()
+
+        result = UNARY_OPERATORS[op](a)
+        self.stack.push(result)
+        self.op_counter += 1
+
+        print(f"{self.op_counter}. {a:.2f} {op} = {result:.2f}")
+
     def calculate(self, math_equation):
         self._reset()
 
         for element in math_equation.split():
             if element in MATH_CONSTANTS:
-                self.push_to_stack(MATH_CONSTANTS[element])
+                self._load(MATH_CONSTANTS[element])
 
             elif element in UNARY_OPERATORS:
-                self.unary_operation(element)
+                self._unary(element)
 
             elif element in BINARY_OPERATORS:
-                self.binary_operation(element)
+                self._binary(element)
 
             else:
-                self.push_to_stack(element)
+                self._load(element)
 
         if self.stack.size != 1:
             print(f"Stack: {self.stack.items}")
             raise EquationException("Stack has more than one element")
 
         return self.stack.peek()
-
-    def push_to_stack(self, item):
-        try:
-            self.stack.push(float(item))
-        except ValueError:
-            raise EquationException(f"Invalid character: {item}")
-
-    def binary_operation(self, op):
-        if self.stack.size < 2:
-            raise EquationException("Not enough items in stack for binary operation.")
-
-        right = self.stack.pop()
-        left = self.stack.pop()
-
-        result = BINARY_OPERATORS[op](left, right)
-        self.stack.push(result)
-        self.op_counter += 1
-
-        print(f"{self.op_counter}. {left:.2f} {op} {right:.2f} = {result:.2f}")
-
-    def unary_operation(self, op):
-        if self.stack.size < 1:
-            raise EquationException("No items in stack.")
-
-        num = self.stack.pop()
-
-        result = UNARY_OPERATORS[op](num)
-        self.stack.push(result)
-        self.op_counter += 1
-
-        print(f"{self.op_counter}. {num:.2f} {op} = {result:.2f}")
 
 
 def test_valid():
