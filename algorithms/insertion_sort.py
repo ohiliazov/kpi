@@ -4,7 +4,7 @@ def insertion_sort(array):
     for i in range(length):
         for j in range(i, 0, -1):
 
-            if j > 0 and array[j - 1] > array[j]:
+            if array[j - 1] > array[j]:
                 array[j - 1], array[j] = array[j], array[j - 1]
 
     return array
