@@ -1,8 +1,8 @@
 def bubble_sort(array):
-    length = len(array)
-    for i in range(length - 1):
+    """ Bubble sort """
+    for i in range(len(array) - 1):
 
-        for j in range(length - i - 1):
+        for j in range(len(array) - i - 1):
 
             if array[j] > array[j + 1]:
                 array[j + 1], array[j] = array[j], array[j + 1]
@@ -10,14 +10,12 @@ def bubble_sort(array):
     return array
 
 
-def bubble_sort_flag(array):
-    length = len(array)
-
-    for i in range(length - 1):
+def bubble_sort_swap_flag(array):
+    """ Bubble sort with swap flag """
+    for i in range(len(array) - 1):
 
         is_sorted = True
-
-        for j in range(length - i - 1):
+        for j in range(len(array) - i - 1):
 
             if array[j] > array[j + 1]:
                 array[j + 1], array[j] = array[j], array[j + 1]
@@ -29,10 +27,37 @@ def bubble_sort_flag(array):
     return array
 
 
-def test_bubble_sort():
-    assert bubble_sort([1, 2, 3, 4, 5, 6, 7, 8]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert bubble_sort([8, 7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert bubble_sort([3, 7, 4, 8, 1, 5, 2, 6]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert bubble_sort_flag([1, 2, 3, 4, 5, 6, 7, 8]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert bubble_sort_flag([8, 7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert bubble_sort_flag([3, 7, 4, 8, 1, 5, 2, 6]) == [1, 2, 3, 4, 5, 6, 7, 8]
+def bubble_sort_swap_index(array):
+    """ Bubble sort with swap index """
+    length = last_swap_index = len(array)
+    for i in range(length - 1):
+
+        for j in range(last_swap_index - 1):
+
+            if array[j] > array[j + 1]:
+                array[j + 1], array[j] = array[j], array[j + 1]
+
+                last_swap_index = j
+
+    return array
+
+
+def bubble_sort_swap_flag_index(array):
+    """ Bubble sort with swap flag and index """
+    length = last_swap_index = len(array)
+
+    for i in range(length - 1):
+
+        is_sorted = True
+        for j in range(1, last_swap_index):
+
+            if array[j - 1] > array[j]:
+                array[j - 1], array[j] = array[j], array[j - 1]
+
+                is_sorted = False
+                last_swap_index = j
+
+        if is_sorted:
+            break
+
+    return array

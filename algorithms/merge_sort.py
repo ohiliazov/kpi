@@ -1,42 +1,29 @@
-def merge_sort(array):
-    length = len(array)
-
-    if length == 1:
-        return array
-
-    middle = length // 2
-
-    left_part = merge_sort(array[:middle])
-    right_part = merge_sort(array[middle:])
-
-    merged_array = merge(left_part, right_part)
-
-    return merged_array
-
-
 def merge(left_part, right_part):
-    left_index = right_index = 0
-
     merged = []
 
-    while left_index < len(left_part) and right_index < len(right_part):
+    i = j = 0
+    while i < len(left_part) and j < len(right_part):
 
-        if left_part[left_index] > right_part[right_index]:
-            merged.append(right_part[right_index])
-            right_index += 1
+        if left_part[i] < right_part[j]:
+            merged.append(left_part[i])
+            i += 1
         else:
-            merged.append(left_part[left_index])
-            left_index += 1
+            merged.append(right_part[j])
+            j += 1
 
-    if left_index < len(left_part):
-        merged.extend(left_part[left_index:])
-    else:
-        merged.extend(right_part[right_index:])
+    if i < len(left_part):
+        merged.extend(left_part[i:])
+    elif j < len(right_part):
+        merged.extend(right_part[j:])
 
     return merged
 
 
-def test_merge_sort():
-    assert merge_sort([1, 2, 3, 4, 5, 6, 7, 8]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert merge_sort([8, 7, 6, 5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert merge_sort([3, 7, 4, 8, 1, 5, 2, 6]) == [1, 2, 3, 4, 5, 6, 7, 8]
+def merge_sort(array):
+    if len(array) == 1:
+        return array
+
+    midpoint = len(array) // 2
+
+    return merge(merge_sort(array[:midpoint]),
+                 merge_sort(array[midpoint:]))
