@@ -3,17 +3,17 @@
 """
 
 
-def find_product(a, b, c):
-    a_b = 0
+def product(x, y, z):
+    xy = 0
 
-    for i in range(b):
-        a_b += a
+    for i in range(y):
+        xy += x
 
-    a_b_c = 0
-    for i in range(c):
-        a_b_c += a_b
+    xyz = 0
+    for i in range(z):
+        xyz += xy
 
-    return a_b_c
+    return xyz
 
 
 if __name__ == '__main__':
@@ -25,8 +25,7 @@ if __name__ == '__main__':
 
         try:
             a, b, c = [int(el) for el in s.split()]
+            abc = product(a, b, c)
+            print(f"Product: {abc}\n")
         except ValueError:
             print("Invalid input. Please use example: 41 12 3\n")
-            continue
-
-        print(f"Product: {find_product(a, b, c)}\n")

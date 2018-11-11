@@ -4,10 +4,6 @@
 """
 from math import sin
 
-n = 1
-a = [100 * sin(i * n) for i in range(500000)]
-inverse_count = 0
-
 
 class InverseCounter:
     def __init__(self):
@@ -66,7 +62,7 @@ if __name__ == '__main__':
         try:
             n = float(s)
         except ValueError:
-            print("Invalid input. Please use example: 14 8 2 4 3 9 0 11\n")
+            print("Invalid input.\n")
             continue
 
         a = [100 * sin(i * n) for i in range(500000)]

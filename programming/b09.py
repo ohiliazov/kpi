@@ -5,24 +5,26 @@
 обчислення залишку від цілочисленого ділення.
 """
 
+
+def div_mod(a, d):
+    r = a
+    q = 0
+
+    while r >= d:
+        q += 1
+        r -= d
+
+    return r, q
+
+
 if __name__ == '__main__':
     while True:
         try:
             a = int(input("Введіть натуральне число a: "))
             d = int(input("Введіть ціле додатне число d: "))
 
-            if a >= 0 and d > 0:
-                break
+            r, q = div_mod(a, d)
+            print("q=%d r=%d" % (q, r))
 
         except ValueError:
             pass
-
-    r = a
-    q = 0
-
-    while r > d:
-        q += 1
-        r -= d
-
-    print("q=%d r=%d" % (q, r))
-    # print(divmod(a, d))

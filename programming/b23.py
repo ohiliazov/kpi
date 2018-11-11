@@ -24,6 +24,12 @@ for i in range(6):
     else:
         right += int(n[i])
 
+if left > 9:
+    left = left // 10 + left % 10
+
+if right > 9:
+    right = right // 10 + right % 10
+
 if left == right:
     print("Це щасливе число.")
 else:
