@@ -60,28 +60,33 @@ class NodeTree:
         return self.right_tree.node
 
     @property
-    def count_children(self):
-        if self.node is None or self.left_node is None and self.right_node is None:
-            return 0
+    def height(self):
+        if self.left_node is None and self.right_node is None:
+            return 1
 
-        children = 0
         if self.left_node:
-            children += 1 + self.left_tree.count_children
+            return 1 + self.left_tree.height
 
         if self.right_node:
-            children += 1 + self.right_tree.count_children
+            return 1 + self.right_tree.height
 
-        return children
+        return 1 + max(self.left_tree.height, self.right_tree.height)
 
     @property
     def balance_factor(self):
-        if self.right_node is None:
-            return - self.left_tree.count_children
+        if self.left_node is None and self.right_node is None:
+            return 0
 
         if self.left_node is None:
-            return self.right_tree.count_children
+            return self.right_tree.height
 
-        return self.right_tree.count_children - self.left_tree.count_children
+        if self.right_node is None:
+            return -self.left_tree.height
+
+        return self.right_tree.height - self.left_tree.height
+
+    def is_balanced(self):
+        return -2 < self.balance_factor < 2
 
     def insert(self, node: Node):
         if not self.node:
