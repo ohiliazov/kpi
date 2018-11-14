@@ -1,3 +1,6 @@
+import os
+
+
 class NodeTreeDuplicateError(KeyError):
     pass
 
@@ -22,6 +25,10 @@ class Node:
     def __gt__(self, other: "Node"):
         return self.key > other.key
 
+    def replace(self, node: "Node"):
+        self.key = node.key
+        self.value = node.value
+
 
 class NodeTree:
     def __init__(self, *args):
@@ -35,12 +42,46 @@ class NodeTree:
         return f"{self.node}"
 
     @property
-    def left(self):
-        return self.node.left_child
+    def left_tree(self):
+        if self.node:
+            return self.node.left_child
 
     @property
-    def right(self):
-        return self.node.right_child
+    def left_node(self):
+        return self.left_tree.node
+
+    @property
+    def right_tree(self):
+        if self.node:
+            return self.node.right_child
+
+    @property
+    def right_node(self):
+        return self.right_tree.node
+
+    @property
+    def count_children(self):
+        if self.node is None or self.left_node is None and self.right_node is None:
+            return 0
+
+        children = 0
+        if self.left_node:
+            children += 1 + self.left_tree.count_children
+
+        if self.right_node:
+            children += 1 + self.right_tree.count_children
+
+        return children
+
+    @property
+    def balance_factor(self):
+        if self.right_node is None:
+            return - self.left_tree.count_children
+
+        if self.left_node is None:
+            return self.right_tree.count_children
+
+        return self.right_tree.count_children - self.left_tree.count_children
 
     def insert(self, node: Node):
         if not self.node:
@@ -57,26 +98,34 @@ class NodeTree:
 
     def delete(self):
         if self.node is not None:
-            if not (self.left or self.right):
+            if self.left_node is None and self.right_node is None:
                 self.node = None
 
-            elif not self.right:
-                self.node = self.left.node
+            elif self.right_node is None:
+                self.node = self.left_node
 
-            elif not self.left:
-                self.node = self.right.node
+            elif self.left_node is None:
+                self.node = self.right_node
 
             else:
-                raise NotImplementedError()
+                successor = self.right_tree.successor()
+                self.node.replace(successor.node)
+                successor.node = None
+
+    def successor(self):
+        if self.left_node is None:
+            return self
+
+        return self.left_tree.successor
 
     def rotate_left(self):
         root_node = self.node
-        pivot_node = self.right.node
+        pivot_node = self.right_node
 
         if pivot_node is None:
             raise NodeTreeRotationError("No pivot node to rotate.")
 
-        pivot_left_node = self.right.left.node
+        pivot_left_node = self.right_tree.left_node
 
         root_node.right_child.node = pivot_left_node
         pivot_node.left_child.node = root_node
@@ -84,12 +133,12 @@ class NodeTree:
 
     def rotate_right(self):
         root_node = self.node
-        pivot_node = self.left.node
+        pivot_node = self.left_node
 
         if pivot_node is None:
             raise NodeTreeRotationError("No pivot node to rotate.")
 
-        pivot_right_node = self.left.right.node
+        pivot_right_node = self.left_tree.right_node
 
         root_node.left_child.node = pivot_right_node
         pivot_node.right_child.node = root_node
@@ -98,10 +147,11 @@ class NodeTree:
 
 tree = NodeTree()
 
-with open("/home/alex/PycharmProjects/kpi/data_structure/BinTree10.txt") as fd:
+with open(os.path.abspath("./BinTree10.txt")) as fd:
     for line in fd.readlines():
         k, v = line.strip().split(maxsplit=1)
         next_node = Node(int(k), v)
         tree.insert(next_node)
 
 print(tree)
+tree.count_children
