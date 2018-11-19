@@ -16,6 +16,9 @@ class Node:
         self.left_child = NodeTree()
         self.right_child = NodeTree()
 
+    def __str__(self):
+        return f"{self.key}"
+
     def __repr__(self):
         return f"{self.key}"
 
@@ -29,6 +32,9 @@ class Node:
         self.key = node.key
         self.value = node.value
 
+    def is_leaf(self):
+        return self.left_child.node is None and self.right_child.node is None
+
 
 class NodeTree:
     def __init__(self, *args):
@@ -39,7 +45,7 @@ class NodeTree:
                 self.insert(node)
 
     def __repr__(self):
-        return f"{self.node}"
+        return ""
 
     @property
     def left_tree(self):
@@ -85,6 +91,7 @@ class NodeTree:
 
         return self.right_tree.height - self.left_tree.height
 
+    @property
     def is_balanced(self):
         return -2 < self.balance_factor < 2
 
@@ -113,15 +120,27 @@ class NodeTree:
                 self.node = self.right_node
 
             else:
-                successor = self.right_tree.successor()
+                successor = self.successor()
                 self.node.replace(successor.node)
                 successor.node = None
 
-    def successor(self):
+    def leftmost_child(self):
         if self.left_node is None:
             return self
 
-        return self.left_tree.successor
+        return self.left_tree.leftmost_child()
+
+    def rightmost_child(self):
+        if self.right_node is None:
+            return self
+
+        return self.right_tree.rightmost_child()
+
+    def successor(self):
+        if self.right_node is not None:
+            return self.right_tree.leftmost_child()
+        else:
+            return self.left_tree.righmost_child()
 
     def rotate_left(self):
         root_node = self.node
@@ -149,14 +168,32 @@ class NodeTree:
         pivot_node.right_child.node = root_node
         self.node = pivot_node
 
+    def balance_node(self):
+        if self.is_balanced:
+            return
+
+        if self.balance_factor < -1:
+            self.rotate_right()
+        else:
+            self.rotate_left()
+
+    def balance_tree(self):
+        if self.left_node:
+            self.left_tree.balance_tree()
+
+        if self.right_node:
+            self.right_tree.balance_tree()
+
+        if not self.is_balanced:
+            self.balance_node()
+
 
 tree = NodeTree()
 
-with open(os.path.abspath("./BinTree10.txt")) as fd:
+with open(os.path.abspath("./data_structure/BinTree10.txt")) as fd:
     for line in fd.readlines():
         k, v = line.strip().split(maxsplit=1)
         next_node = Node(int(k), v)
         tree.insert(next_node)
 
 print(tree)
-tree.count_children
