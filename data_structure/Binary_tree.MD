@@ -1,7 +1,7 @@
 ## Examples
 
 # Logs
-"""
+'''
 Tree Mandragora created.
 Read: "24 Root": Replaced: "24 Root": Key: 24, VUD:  Root
 Read: "12 Harry Potter": Replaced: "12 Harry Potter": Key: 12, VUD:  Harry Potter
@@ -18,10 +18,10 @@ Read: "31 Severus Snape": Replaced: "31 Severus Snape": Key: 31, VUD:  Severus S
 Read: "45 Dementors": Replaced: "45 Dementors": Key: 45, VUD:  Dementors
 Read: "42 Tom Riddle": Replaced: "42 Tom Riddle": Key: 42, VUD:  Tom Riddle
 Weight: 14; Height: 4; Width:  14
-"""
+'''
 
 # Output
-"""
+'''
 Mandragora
 24  Root
     12  Harry Potter
@@ -37,4 +37,4 @@ Mandragora
         38  Death Eaters
             45  Dementors
                 42  Tom Riddle
-"""
+'''
