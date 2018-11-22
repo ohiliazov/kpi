@@ -1,27 +1,17 @@
-class NodeTreeNotFound(KeyError):
-    pass
-
-
-class NodeTreeDuplicateError(KeyError):
-    pass
-
-
-class NodeTreeRotationError(KeyError):
-    pass
+import argparse
+import os
+import sys
 
 
 class Node:
     def __init__(self, key: int, value: str = None):
-        self.key = key
+        self.key = int(key)
         self.value = value
         self.left = NodeTree()
         self.right = NodeTree()
 
     def __str__(self):
         return f"{self.key} {self.value}"
-
-    def __repr__(self):
-        return f"{self.key}"
 
     def __lt__(self, other: "Node"):
         return self.key < other.key
@@ -44,87 +34,75 @@ class NodeTree:
         for node in nodes:
             self._insert(node)
 
-    def __repr__(self):
-        return ""
+    def __str__(self):
+        return self.display()
+
+    def __getitem__(self, item):
+        t = self._find(item)
+        if t:
+            return t.node.value
+
+    def __delitem__(self, key):
+        t = self._find(key)
+        if t:
+            t._delete()
 
     def display(self, depth=0):
         indent = "    " * depth
         result = f"{indent}{self.node}\n"
 
-        if self.left_node:
-            result += self.left_tree.display(depth + 1)
+        if self.node.left.node:
+            result += self.node.left.display(depth + 1)
 
-        if self.right_node:
-            result += self.right_tree.display(depth + 1)
+        if self.node.right.node:
+            result += self.node.right.display(depth + 1)
 
         return result
 
-    def get_tree(self, key):
+    def _find(self, key: int):
+        key = int(key)
         if key == self.node.key:
             return self
 
-        elif key < self.node.key and self.left_node:
-            return self.left_tree.get_tree(key)
+        elif key < self.node.key and self.node.left.node:
+            return self.node.left._find(key)
 
-        elif key > self.node.key and self.right_node:
-            return self.right_tree.get_tree(key)
-
-        raise NodeTreeNotFound(f"Node {key} not found in tree.")
-
-    @property
-    def left_tree(self):
-        if self.node:
-            return self.node.left
-
-    @property
-    def left_node(self):
-        return self.left_tree.node
-
-    @property
-    def right_tree(self):
-        if self.node:
-            return self.node.right
-
-    @property
-    def right_node(self):
-        return self.right_tree.node
-
-    @property
-    def height(self):
-        if self.left_node is None and self.right_node is None:
-            return 1
-
-        if self.left_node:
-            return 1 + self.left_tree.height
-
-        if self.right_node:
-            return 1 + self.right_tree.height
-
-        return 1 + max(self.left_tree.height, self.right_tree.height)
-
-    @property
-    def balance_factor(self):
-
-        if self.left_node is None and self.right_node is None:
-            balance_factor = 0
-
-        elif self.left_node is None:
-            balance_factor = self.right_tree.height
-
-        elif self.right_node is None:
-            balance_factor = -self.left_tree.height
-
-        else:
-            balance_factor = self.right_tree.height - self.left_tree.height
-
-        return balance_factor
+        elif key > self.node.key and self.node.right.node:
+            return self.node.right._find(key)
 
     @property
     def is_balanced(self):
-        return -2 < self.balance_factor < 2
+        balanced = -2 < self.balance_factor < 2
+
+        if self.node.left.node:
+            balanced = balanced and self.node.left.is_balanced
+
+        if self.node.right.node:
+            balanced = balanced and self.node.right.is_balanced
+
+        return balanced
+
+    @property
+    def height(self):
+        height = 1
+        height_left = self.node.left.height if self.node.left.node else 0
+        height_right = self.node.right.height if self.node.right.node else 0
+
+        return height + max(height_left, height_right)
+
+    @property
+    def balance_factor(self):
+        balance_factor = 0
+
+        if self.node.left.node:
+            balance_factor -= self.node.left.height
+
+        if self.node.right.node:
+            balance_factor += self.node.right.height
+
+        return balance_factor
 
     def _insert(self, node: Node):
-
         if not self.node:
             self.node = node
 
@@ -135,125 +113,197 @@ class NodeTree:
             self.node.right._insert(node)
 
         else:
-            raise NodeTreeDuplicateError(f"Node {node.key} is already in tree.")
+            print(f"Duplicate: {node.key}")
 
     def _delete(self):
         if self.node is not None:
-            if self.left_node is None and self.right_node is None:
+            if self.node.left.node is None and self.node.right.node is None:
                 self.node = None
 
-            elif self.right_node is None:
-                self.node = self.left_node
+            elif self.node.right.node is None:
+                self.node = self.node.left.node
 
-            elif self.left_node is None:
-                self.node = self.right_node
+            elif self.node.left.node is None:
+                self.node = self.node.right.node
 
             else:
-                successor = self.successor()
+                successor = self.node.right._successor()
                 self.node.replace(successor.node)
-                successor.node = None
+                successor.node = successor.node.right.node
+
+    def _successor(self):
+        if self.node.left.node is None:
+            return self
+
+        return self.node.left._successor()
+
+    def _rotate_left(self):
+        root_node = self.node
+        pivot_node = self.node.right.node
+
+        if pivot_node:
+            pivot_left_node = self.node.right.node.left.node
+            root_node.right.node = pivot_left_node
+            pivot_node.left.node = root_node
+            self.node = pivot_node
+
+    def _rotate_right(self):
+        root_node = self.node
+        pivot_node = self.node.left.node
+
+        if pivot_node:
+            pivot_right_node = self.node.left.node.right.node
+            root_node.left.node = pivot_right_node
+            pivot_node.right.node = root_node
+            self.node = pivot_node
+
+    def _balance(self):
+        if self.balance_factor < -1:
+            if self.node.left.balance_factor > 0:
+                self.node.left._rotate_left()
+            self._rotate_right()
+        elif self.balance_factor > 1:
+            if self.node.right.balance_factor < 0:
+                self.node.right._rotate_right()
+            self._rotate_left()
+
+    def _balance_tree(self):
+        while not self.is_balanced:
+            if self.node.left.node:
+                self.node.left._balance_tree()
+
+            if self.node.right.node:
+                self.node.right._balance_tree()
+
+            self._balance()
+
+
+class NodeTreeFacade(NodeTree):
+    def find(self, key):
+        t = self._find(key)
+        if t:
+            print(t.node.value)
+        else:
+            print(f"Not found: {key}")
 
     def insert(self, node: Node):
-        print(f"Insert node {node.key}")
+        print(f"Insert: {node.key}")
         self._insert(node)
 
-    def delete(self):
-        print(f"Delete node {self.node.key}")
-        self.delete()
+    def delete(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Delete: {t.node.key}")
+        t._delete()
 
-    def smallest_child(self):
-        if self.left_node is None:
-            return self
+    def rotate_left(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Left rotation: {t.node.key}")
+        t._rotate_left()
 
-        return self.left_tree.smallest_child()
+    def rotate_right(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Right rotation: {t.node.key}")
+        t._rotate_right()
 
-    def biggest_child(self):
-        if self.right_node is None:
-            return self
+    def rotate_left_left(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Double left rotation: {t.node.key}")
+        t._rotate_left()
+        t._rotate_left()
 
-        return self.right_tree.biggest_child()
+    def rotate_right_right(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Double right rotation: {t.node.key}")
+        t._rotate_right()
+        t._rotate_right()
 
-    def successor(self):
-        if self.right_node is not None:
-            return self.right_tree.smallest_child()
-        else:
-            return self.left_tree.biggest_child()
+    def rotate_left_right(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Left right rotation: {t.node.key}")
+        t._rotate_left()
+        t._rotate_right()
 
-    def rotate_left(self):
-        print(f"Left rotation node {self.node.key}")
-        root_node = self.node
-        pivot_node = self.right_node
+    def rotate_right_left(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Right left rotation: {t.node.key}")
+        t._rotate_right()
+        t._rotate_left()
 
-        if pivot_node is None:
-            raise NodeTreeRotationError("No pivot node to rotate.")
-
-        pivot_left_node = self.right_tree.left_node
-
-        root_node.right.node = pivot_left_node
-        pivot_node.left.node = root_node
-        self.node = pivot_node
-
-    def rotate_right(self):
-        print(f"Right rotation node {self.node.key}")
-        root_node = self.node
-        pivot_node = self.left_node
-
-        if pivot_node is None:
-            raise NodeTreeRotationError("No pivot node to rotate.")
-
-        pivot_right_node = self.left_tree.right_node
-
-        root_node.left.node = pivot_right_node
-        pivot_node.right.node = root_node
-        self.node = pivot_node
-
-    def rotate_left_left(self):
-        self.rotate_left()
-        self.rotate_left()
-
-    def rotate_left_right(self):
-        self.rotate_left()
-        self.rotate_right()
-
-    def rotate_right_left(self):
-        self.rotate_right()
-        self.rotate_left()
-
-    def rotate_right_right(self):
-        self.rotate_right()
-        self.rotate_right()
-
-    def balance_node(self):
-        if self.is_balanced:
-            print(f"Node {self.node.key} is balanced")
-            return
-
-        if self.balance_factor < -1:
-            self.rotate_right()
-        else:
-            self.rotate_left()
-
-    def balance_tree(self):
-        if self.left_node:
-            self.left_tree.balance_tree()
-
-        if self.right_node:
-            self.right_tree.balance_tree()
-
-        if not self.is_balanced:
-            print(f"Balancing node {self.node.key}")
-            self.balance_node()
+    def balance_tree(self, key=None):
+        t = self._find(key or self.node.key)
+        print(f"Balance tree: {t.node.key}")
+        t._balance_tree()
 
 
-tree = NodeTree()
+def parse_cmd_line():
+    parser = argparse.ArgumentParser(argument_default=None)
 
-with open("/home/alex/PycharmProjects/kpi/data_structure/BinTree10.txt") as fd:
-    for line in fd.readlines():
-        k, v = line.strip().split(maxsplit=1)
-        next_node = Node(int(k), v)
-        tree._insert(next_node)
+    parser.add_argument("bt_path", help="Path to binary tree input")
 
-print(tree.display())
-tree.balance_tree()
-print(tree.display())
-tree.balance_tree()
+    return parser.parse_args()
+
+
+def parse_input(tree, command):
+    cmd = command.split(" ")
+
+    while len(cmd) < 3:
+        cmd.append(None)
+
+    if cmd[0] in ['close', 'exit', 'quit']:
+        print("Exit")
+        sys.exit(0)
+
+    if cmd[0] in ['add', 'insert'] and cmd[1]:
+        tree.insert(Node(cmd[1], cmd[2]))
+
+    elif cmd[0] in ['get'] and cmd[1]:
+        print(f"Key: {cmd[1]} Value: {tree[cmd[1]]}")
+
+    elif cmd[0] in ['del', 'delete']:
+        tree.delete(cmd[1])
+
+    elif cmd[0] in ['l', 'left', 'rotate_left']:
+        tree.rotate_left(cmd[1])
+
+    elif cmd[0] in ['r', 'right', 'rotate_right']:
+        tree.rotate_right(cmd[1])
+
+    elif cmd[0] in ['ll', 'left_left', 'double_rotate_left']:
+        tree.rotate_left_left(cmd[1])
+
+    elif cmd[0] in ['rr', 'right_right', 'double_rotate_right']:
+        tree.rotate_right_right(cmd[1])
+
+    elif cmd[0] in ['lr', 'left_right', 'rotate_left_right']:
+        tree.rotate_left_right(cmd[1])
+
+    elif cmd[0] in ['rl', 'right_left', 'rotate_right_left']:
+        tree.rotate_right_left(cmd[1])
+
+    elif cmd[0] in ['balance']:
+        tree.balance_tree(cmd[1])
+
+    elif cmd[0] in ['print', 'display']:
+        print(tree.display())
+    elif cmd[0] in ['save'] and cmd[1]:
+        with open(os.path.abspath(cmd[1]), mode='w') as fd:
+            fd.write(tree.display())
+    else:
+        print(f"Unknown or incorrect command: {cmd}")
+
+
+if __name__ == "__main__":
+    bt_path = parse_cmd_line().bt_path
+
+    tree = NodeTreeFacade()
+    with open(os.path.abspath(bt_path)) as fd:
+        for line in fd.readlines():
+            k, v = line.strip().split(maxsplit=1)
+            next_node = Node(int(k), v)
+            tree.insert(next_node)
+
+    print(tree.display())
+
+    while True:
+        cmd = input("Write command: ")
+        parse_input(tree, cmd)
