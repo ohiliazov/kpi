@@ -1,15 +1,16 @@
-9 Expecto Patronum
-18 Expelliarmus
-27 Wingardium Leviosa
-1 Obliviate
-29 Lumos
-6 Protego
-20 Crucio
-12 Imperio
-11 Colloportus
-5 Avada Kedavra
-26 Alohomora
-13 Accio
-10 Muffliato
-7 Sectumsempra
-25 Reparo
+15 Levicorpus
+25 Expecto Patronum
+3 Expelliarmus
+8 Wingardium Leviosa
+19 Obliviate
+14 Lumos
+12 Protego
+0 Crucio
+24 Imperio
+5 Colloportus
+17 Avada Kedavra
+22 Alohomora
+23 Accio
+16 Muffliato
+11 Sectumsempra
+21 Reparo

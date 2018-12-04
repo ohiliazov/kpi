@@ -47,17 +47,25 @@ class NodeTree:
         if t:
             t._delete()
 
-    def display(self, depth=0):
+    def display(self, order='pre', reverse=False, depth=0):
         indent = "    " * depth
-        result = f"{indent}{self.node}\n"
+        this_node = f"{indent}{self.node}\n"
 
-        if self.node.left.node:
-            result += self.node.left.display(depth + 1)
+        if not reverse:
+            first_node = self.node.left.display(order, reverse, depth + 1) if self.node.left.node else ""
+            second_node = self.node.right.display(order, reverse, depth + 1) if self.node.right.node else ""
+        else:
+            first_node = self.node.right.display(order, reverse, depth + 1) if self.node.right.node else ""
+            second_node = self.node.left.display(order, reverse, depth + 1) if self.node.left.node else ""
 
-        if self.node.right.node:
-            result += self.node.right.display(depth + 1)
-
-        return result
+        if order == 'pre':
+            return this_node + first_node + second_node
+        elif order == 'in':
+            return first_node + this_node + second_node
+        elif order == 'post':
+            return first_node + second_node + this_node
+        else:
+            print(f"Order should be of choices: pre, in, post")
 
     def _find(self, key: int):
         key = int(key)
@@ -192,42 +200,35 @@ class NodeTreeFacade(NodeTree):
 
     def delete(self, key=None):
         t = self._find(key or self.node.key)
-        print(f"Delete: {t.node.key}")
-        t._delete()
+        if t.node:
+            print(f"Delete: {t.node.key}")
+            t._delete()
 
     def rotate_left(self, key=None):
         t = self._find(key or self.node.key)
-        print(f"Left rotation: {t.node.key}")
-        t._rotate_left()
+        if t.node and t.node.right:
+            print(f"Left rotation: {t.node.key}")
+            t._rotate_left()
 
     def rotate_right(self, key=None):
         t = self._find(key or self.node.key)
-        print(f"Right rotation: {t.node.key}")
-        t._rotate_right()
-
-    def rotate_left_left(self, key=None):
-        t = self._find(key or self.node.key)
-        print(f"Double left rotation: {t.node.key}")
-        t._rotate_left()
-        t._rotate_left()
-
-    def rotate_right_right(self, key=None):
-        t = self._find(key or self.node.key)
-        print(f"Double right rotation: {t.node.key}")
-        t._rotate_right()
-        t._rotate_right()
+        if t.node and t.node.left:
+            print(f"Right rotation: {t.node.key}")
+            t._rotate_right()
 
     def rotate_left_right(self, key=None):
         t = self._find(key or self.node.key)
-        print(f"Left right rotation: {t.node.key}")
-        t._rotate_left()
-        t._rotate_right()
+        if t.node and t.node.left.node:
+            print(f"Double right rotation: {t.node.key}")
+            t.node.left._rotate_left()
+            t._rotate_right()
 
     def rotate_right_left(self, key=None):
         t = self._find(key or self.node.key)
-        print(f"Right left rotation: {t.node.key}")
-        t._rotate_right()
-        t._rotate_left()
+        if t.node and t.node.right.node:
+            print(f"Right left rotation: {t.node.key}")
+            t.node.right._rotate_right()
+            t._rotate_left()
 
     def balance_tree(self, key=None):
         t = self._find(key or self.node.key)
@@ -268,23 +269,19 @@ def parse_input(tree, command):
     elif cmd[0] in ['r', 'right', 'rotate_right']:
         tree.rotate_right(cmd[1])
 
-    elif cmd[0] in ['ll', 'left_left', 'double_rotate_left']:
-        tree.rotate_left_left(cmd[1])
-
-    elif cmd[0] in ['rr', 'right_right', 'double_rotate_right']:
-        tree.rotate_right_right(cmd[1])
-
-    elif cmd[0] in ['lr', 'left_right', 'rotate_left_right']:
+    elif cmd[0] in ['rr', 'left_right', 'rotate_left_right']:
         tree.rotate_left_right(cmd[1])
 
-    elif cmd[0] in ['rl', 'right_left', 'rotate_right_left']:
+    elif cmd[0] in ['ll', 'right_left', 'rotate_right_left']:
         tree.rotate_right_left(cmd[1])
 
     elif cmd[0] in ['balance']:
         tree.balance_tree(cmd[1])
 
     elif cmd[0] in ['print', 'display']:
-        print(tree.display())
+        order = cmd[1] if cmd[1] else 'pre'
+        reverse = bool(cmd[2])
+        print(tree.display(order, reverse))
     elif cmd[0] in ['save'] and cmd[1]:
         with open(os.path.abspath(cmd[1]), mode='w') as fd:
             fd.write(tree.display())

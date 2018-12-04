@@ -1,0 +1,34 @@
+1 Crucio
+2 Avada Kedavra
+3 Homenum Revelio
+4 Protego Totalum
+5 Finestra
+6 Revelio
+7 Expelliarmus
+8 Imperio
+9 Accio
+10 Stupefy
+11 Impedimenta
+12 Petrificus Totalus
+13 Alohomora
+14 Lumos
+15 Wingardium Leviosa
+16 Obliviate
+17 Protego
+18 Nox
+19 Morsmordre
+20 Unbreakable vow
+21 Expecto Patronum
+22 Relashio
+23 Diffindo
+24 Riddikulus
+25 Reparo
+26 Levicorpus
+27 Incendio
+28 Aguamenti
+29 Priori Incantatem
+30 Dissendium
+31 Muffliato
+32 Legilimens
+33 Sectumsempra
+34 Confundo
