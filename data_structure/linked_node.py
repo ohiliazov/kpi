@@ -69,7 +69,7 @@ class LinkedList:
             last_node = last_node.next
         last_node.next = node
 
-    def insert_after_node(self, parent_key, node):
+    def add_after_node(self, parent_key, node):
         parent = self.find(parent_key)
 
         print(f"Adding node {node.key} after node {parent_key}")
@@ -85,7 +85,6 @@ class LinkedList:
 
         if node.key == key:
             self.head = node.next
-            del node
             return
 
         while node.next:
@@ -185,9 +184,6 @@ def test_linked_node():
         {'name': "Проектування та аналіз обчислювальних алгоритмів",
          'credit': 76, 'term': 7, 'class_hours': 30,
          'lecture_hours': 70, 'work': 5, 'exam': True},
-        {'name': "Операційні системи",
-         'credit': 54, 'term': 3, 'class_hours': 36,
-         'lecture_hours': 29, 'work': 5, 'exam': False},
     ]
     n1 = LinkedNode(1, subjects[0])
     n2 = LinkedNode(2, subjects[1])
@@ -195,7 +191,6 @@ def test_linked_node():
     n4 = LinkedNode(4, subjects[3])
     n5 = LinkedNode(5, subjects[4])
     n6 = LinkedNode(6, subjects[5])
-    n7 = LinkedNode(7, subjects[6])
     root = LinkedList()
 
     print("\n\nADD TWO ELEMENTS TO HEAD")
@@ -211,8 +206,8 @@ def test_linked_node():
     print(root)
 
     print("\n\nADD TWO ELEMENTS BETWEEN")
-    root.insert_after_node(1, n5)
-    root.insert_after_node(3, n6)
+    root.add_after_node(1, n5)
+    root.add_after_node(3, n6)
     print()
     print(root)
 
