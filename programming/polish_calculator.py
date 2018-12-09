@@ -9,6 +9,7 @@
 Група: ІС-зп81
 """
 
+import argparse
 import math
 import operator
 
@@ -63,14 +64,16 @@ class Stack:
 
 class PolishCalculator:
     def __init__(self):
-        self.op_counter = 0
+        """ Initialize stack and operation counter """
         self.stack = Stack()
+        self.op_counter = 0
 
     def _reset(self):
-        self.op_counter = 0
+        """ Reset stack and operation counter """
         self.stack = Stack()
+        self.op_counter = 0
 
-    def _load(self, item):
+    def _push_to_stack(self, item):
         """ Load a number to stack
         1. Convert a
         :param item: string that represents float number
@@ -81,6 +84,7 @@ class PolishCalculator:
             raise EquationException(f"Invalid character: {item}")
 
         self.stack.push(item)
+        print(f"ADD TO STACK: {item:.2f}")
 
     def _binary(self, op):
         """ Binary operation:
@@ -96,11 +100,14 @@ class PolishCalculator:
         b = self.stack.pop()
         c = self.stack.pop()
 
-        result = BINARY_OPERATORS[op](c, b)
-        self.stack.push(result)
-        self.op_counter += 1
+        try:
+            result = BINARY_OPERATORS[op](c, b)
+        except ZeroDivisionError:
+            raise EquationException(f"Cannot divide by zero: {c:.2f} {op} {b:.2f}")
 
-        print(f"{self.op_counter}. {c:.2f} {op} {b:.2f} = {result:.2f}")
+        self.op_counter += 1
+        print(f"OPERATION {self.op_counter}: {c:.2f} {op} {b:.2f} = {result:.2f}")
+        self._push_to_stack(result)
 
     def _unary(self, op):
         """ Unary operation:
@@ -114,19 +121,23 @@ class PolishCalculator:
             raise EquationException("No items in stack.")
 
         a = self.stack.pop()
-
         result = UNARY_OPERATORS[op](a)
-        self.stack.push(result)
-        self.op_counter += 1
 
-        print(f"{self.op_counter}. {a:.2f} {op} = {result:.2f}")
+        self.op_counter += 1
+        print(f"OPERATION {self.op_counter}: {a:.2f} {op} = {result:.2f}")
+        self._push_to_stack(result)
 
     def calculate(self, math_equation):
         self._reset()
 
-        for element in math_equation.split():
+        if isinstance(math_equation, str):
+            math_equation = math_equation.split()
+
+        print(f"EQUATION: {' '.join(math_equation)}")
+        for element in math_equation:
+
             if element in MATH_CONSTANTS:
-                self._load(MATH_CONSTANTS[element])
+                self._push_to_stack(MATH_CONSTANTS[element])
 
             elif element in UNARY_OPERATORS:
                 self._unary(element)
@@ -135,13 +146,16 @@ class PolishCalculator:
                 self._binary(element)
 
             else:
-                self._load(element)
+                self._push_to_stack(element)
+
+            print(f"\nSTACK: {[round(item, 2) for item in self.stack.items]}")
 
         if self.stack.size != 1:
-            print(f"Stack: {self.stack.items}")
             raise EquationException("Stack has more than one element")
 
-        return self.stack.peek()
+        result = self.stack.peek()
+        print(f"RESULT: {result:.2f}\n\n")
+        return result
 
 
 def test_valid():
@@ -153,7 +167,8 @@ def test_valid():
         "7 2 //": 3,
         "9 2 ^": 81,
         "11 12 13 + *": 275,
-        "1 2 + 4 × 5 + 3 −": 14
+        "1 2 + 4 × 5 + 3 −": 14,
+        "3 4 2 * 1 5 − 2 ^ / +": 3.5
     }
     calc = PolishCalculator()
 
@@ -163,6 +178,7 @@ def test_valid():
 
 def test_invalid():
     invalid_strings = [
+        "1 0 /",
         "- 1",
         "+ 2",
         "* 3",
@@ -180,14 +196,28 @@ def test_invalid():
         try:
             calc.calculate(s)
 
-        except EquationException:
+        except EquationException as exc:
+            print(f"EXCEPTION: {exc}")
             pass
         else:
             raise AssertionError("Test failed on: %s" % s)
 
 
+def parse_equation_arg():
+    parser = argparse.ArgumentParser(argument_default=None)
+    parser.add_argument('equation', nargs='*', help='Specific providers list')
+
+    return parser.parse_known_args()[0].equation
+
+
 if __name__ == '__main__':
     calc = PolishCalculator()
+
+    equation = parse_equation_arg()
+
+    if equation:
+        result = calc.calculate(equation)
+        exit(0)
 
     while True:
         try:
@@ -202,8 +232,7 @@ if __name__ == '__main__':
                 test_invalid()
             else:
                 result = calc.calculate(equation)
-                print("\nEquation result: %.2f\n" % result)
 
-        except (EquationException, IOError) as e:
-            print(e)
+        except (EquationException, IOError) as exc:
+            print(f"EXCEPTION: {exc}\n")
             pass
