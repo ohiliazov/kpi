@@ -1,3 +1,6 @@
+import random, sys
+
+
 def merge(left_part, right_part):
     merged = []
 
@@ -27,3 +30,6 @@ def merge_sort(array):
 
     return merge(merge_sort(array[:midpoint]),
                  merge_sort(array[midpoint:]))
+
+
+merge_sort(random.sample(range(sys.maxsize), 1000000))
