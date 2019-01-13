@@ -1,72 +1,142 @@
-import operator
+import math
 import sys
 
-OPERATORS = {
-    '+': operator.add,
-    '-': operator.sub,
-    '*': operator.mul,
-    '/': operator.truediv,
-    '//': operator.floordiv,
-    '%': operator.mod,
-    '^': operator.pow,
-    '**': operator.pow
-}
+BINARY_OPERATORS = [
+    "+",
+    "-",
+    "*",
+    "/",
+    "^",
+    "%",
+    "//",
+    "**"
+]
+
+UNARY_OPERATORS = [
+    "!",
+    "sin",
+    "cos",
+    "tg", "tan",
+    "cot", "cotan", "cotg", "ctg", "ctn",
+    "sec",
+    "csc", "cosec"
+]
 
 
-def validate_equation(equation: list):
-    """ Checks if equation is correct. Returns ValueError with info """
-    if not equation:
-        raise ValueError("Incorrect equation: No elements are given")
+def push(stack: list, item: [str, float]):
+    """ Converts item to float and pushes onto stack """
+    item = float(item)  # raises ValueError if item cannot be converted
 
-    if equation[0] in OPERATORS:
-        raise ValueError("Incorrect equation: First element is operator")
-
-    diff_count = 0
-
-    for item in equation:
-        if item in OPERATORS.keys():
-            diff_count -= 1
-        elif float(item):
-            diff_count += 1
-
-        if diff_count < 1:
-            raise ValueError("Incorrect equation: Too many operators")
-
-    if diff_count > 1:
-        raise ValueError("Incorrect equation: Too many operands")
+    stack.append(item)
+    print(f"Pushed {item:.2f} onto stack")
 
 
-def execute_operation(x, y, op):
-    return OPERATORS[op](x, y)
+def pop(stack: list):
+    """ Removes last item while removing it from stack """
+    if not stack:
+        raise ValueError("Stack is empty")
+
+    item = stack.pop()
+    print(f"Popped {item:.2f} from stack")
+
+    return item
+
+
+def do_binary_math(stack: list, op: str):
+    """ Pops two elements from stack, does math on them, and pushes the result onto stack """
+    y = pop(stack)
+    x = pop(stack)
+
+    if op == "+":
+        res = x + y
+
+    elif op == "-":
+        res = x - y
+
+    elif op == "*":
+        res = x * y
+
+    elif op == "/":
+        res = x / y
+
+    elif op == "%":
+        res = x % y
+
+    elif op == "^" or op == "**":
+        res = x ** y
+
+    elif op == "//":
+        res = x // y
+
+    else:
+        raise NotImplementedError(f"Operator {op} is not supported")  # sanity check
+
+    print(f"{x:.2f} {op} {y:.2f} = {res:.2f}")
+    push(stack, res)
+
+
+def do_unary_math(stack: list, op: str):
+    """ Pops one element from stack, does math on it, and pushes the result onto stack """
+    x = pop(stack)
+
+    if op == "!":
+        res = math.factorial(x)
+
+    elif op == "sin":
+        res = math.sin(x)
+    elif op == "cos":
+        res = math.cos(x)
+    elif op in ("tg", "tan"):
+        res = math.tan(x)
+
+    elif op in ("cot", "cotan", "cotg", "ctg", "ctn"):
+        res = 1 / math.tan(x)
+    elif op == "sec":
+        res = 1 / math.cos(x)
+    elif op in ("csc", "cosec"):
+        res = 1 / math.sin(x)
+
+    else:
+        raise NotImplementedError(f"Operator {op} is not supported")  # sanity check
+
+    print(f"{x:.2f} {op} = {res:.2f}")
+    push(stack, res)
 
 
 def rpn_calculate(equation: list):
     stack = []
-    counter = 1
-    for item in equation:
-        if item in OPERATORS:
-            y = stack.pop()
-            x = stack.pop()
-            res = execute_operation(x, y, item)
-            stack.append(res)
-            print("Step %d: %.2f %s %.2f = %.2f" % (counter, x, item, y, res))
+
+    for token in equation:
+
+        if token in BINARY_OPERATORS:
+            do_binary_math(stack, token)
+
+        elif token in UNARY_OPERATORS:
+            do_unary_math(stack, token)
+
         else:
-            stack.append(float(item))
-            print("Step %d: add %s to stack" % (counter, item))
+            push(stack, token)
 
-        print("Stack: %s\n" % stack)
-        counter += 1
+    if len(stack) > 1:
+        raise AssertionError("Stack has more than one element")
 
-    return stack.pop()
+    result = pop(stack)
+
+    return result
 
 
-if __name__ == "__main__":
-    if sys.argv[1:]:
+def main():
+    if len(sys.argv) > 1:
         equation = sys.argv[1:]
+
     else:
         input_string = input("Enter RPN equation: ")
         equation = input_string.split()
 
-    validate_equation(equation)
     result = rpn_calculate(equation)
-    print("RESULT: %.2f" % result)
+
+    print(f"Result: {' '.join(equation)} => {result:.2f}")
+
+
+if __name__ == "__main__":
+    main()
