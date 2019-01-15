@@ -3,13 +3,12 @@ import sys
 
 BINARY_OPERATORS = [
     "+",
-    "-",
-    "*",
-    "/",
-    "^",
+    "-", "−",
+    "*", "×",
+    "/", "÷",
+    "^", "**",
     "%",
-    "//",
-    "**"
+    "//"
 ]
 
 UNARY_OPERATORS = [
@@ -50,23 +49,23 @@ def do_binary_math(stack: list, op: str):
     if op == "+":
         res = x + y
 
-    elif op == "-":
+    elif op in ("-", "−"):
         res = x - y
 
-    elif op == "*":
+    elif op in ("*", "×"):
         res = x * y
 
-    elif op == "/":
+    elif op in ("/", "÷"):
         res = x / y
+
+    elif op == "//":
+        res = x // y
 
     elif op == "%":
         res = x % y
 
-    elif op == "^" or op == "**":
+    elif op in ("^", "**"):
         res = x ** y
-
-    elif op == "//":
-        res = x // y
 
     else:
         raise NotImplementedError(f"Operator {op} is not supported")  # sanity check
@@ -117,8 +116,8 @@ def rpn_calculate(equation: list):
         else:
             push(stack, token)
 
-    if len(stack) > 1:
-        raise AssertionError("Stack has more than one element")
+    if len(stack) != 1:
+        raise AssertionError("Stack length is not equal to one")
 
     result = pop(stack)
 
