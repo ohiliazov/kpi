@@ -85,14 +85,14 @@ class Dot:
 
     def set_x(self, x):
         if not isinstance(x, (int, float)):
-            raise TypeError('Coordinated should be a number')
+            raise TypeError('Coordinate should be a number')
         self.x = x
 
         return self
 
     def set_y(self, y):
         if not isinstance(y, (int, float)):
-            raise TypeError('Coordinated should be a number')
+            raise TypeError('Coordinate should be a number')
         self.y = y
 
         return self
