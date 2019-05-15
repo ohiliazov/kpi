@@ -1,13 +1,18 @@
 import math
+import matplotlib.pyplot as plt
 
 
-class Dot:
+class Point:
     def __init__(self, x: [int, float], y: [int, float]):
-        self.x = None
-        self.y = None
-
         self.set_x(x)
         self.set_y(y)
+
+    def __str__(self):
+        return f"Point({round(self.x, 2)}, {round(self.y, 2)})"
+
+    @property
+    def coordinates(self):
+        return self.x, self.y
 
     def set_x(self, x):
         if not isinstance(x, (int, float)):
@@ -26,14 +31,22 @@ class Dot:
         return math.atan2(dy, dx)
 
 
-class Rhombus(Dot):
+class Rhombus(Point):
     def __init__(self, x: [int, float], y: [int, float], d1: [int, float], d2: [int, float]):
         super().__init__(x, y)
-        self.d1 = None
-        self.d2 = None
-
         self.set_d1(d1)
         self.set_d2(d2)
+
+    def __str__(self):
+        return f"Rhombus(center={self.center}, diagonals={self.diagonals})"
+
+    @property
+    def center(self):
+        return self.coordinates
+
+    @property
+    def diagonals(self):
+        return self.coordinates
 
     def set_d1(self, d1):
         if not isinstance(d1, (int, float)):
@@ -46,47 +59,76 @@ class Rhombus(Dot):
         self.d2 = d2
 
 
-class Circle(Dot):
+class Circle(Point):
     def __init__(self, x: [int, float], y: [int, float], r: [int, float]):
         super().__init__(x, y)
-        self.r = None
-
         self.set_radius(r)
+
+    def __str__(self):
+        return f"Circle(center={str(self.center)}, radius={round(self.raduis, 2)})"
+
+    @property
+    def center(self):
+        return self.coordinates
 
     def set_radius(self, r):
         if not isinstance(r, (int, float)):
             raise TypeError('Radius should be a number')
-        self.r = r
+        self.raduis = r
 
 
 class InscribedRegularTriangle(Circle):
-    def __init__(self, x: [int, float], y: [int, float], r: [int, float], v: Dot):
+    def __init__(self, x: [int, float], y: [int, float], r: [int, float], v: Point):
         super().__init__(x, y, r)
-        self.v1 = None
-        self.v2 = None
-        self.v3 = None
         self.set_vertices(v)
 
-    def is_on_circle(self, d: Dot):
-        return math.isclose((d.x - self.x) ** 2 + (d.y - self.y) ** 2, self.r ** 2)
+    def __str__(self):
+        return f"InscribedRegularTriangle({[str(v) for v in self.vertices]})"
 
-    def set_vertices(self, v: Dot):
-        if not self.is_on_circle(v):
+    @property
+    def vertices(self):
+        return self.v1, self.v2, self.v3
+
+    def validate_point_on_circle(self, d: Point):
+        if not math.isclose((d.x - self.x) ** 2 + (d.y - self.y) ** 2, self.raduis ** 2):
             raise ValueError("Dot is not on circle")
 
-        self.v1 = v
-        angle_1 = v.angle(self.x, self.y)
+    def set_vertices(self, vertex: Point):
+        self.validate_point_on_circle(vertex)
 
-        angle_2 = angle_1 + math.pi / 3
-        v2_x = math.cos(angle_2) * (v.x - self.x) - math.sin(angle_2) * (v.y - self.y) + self.x
-        v2_y = math.sin(angle_2) * (v.x - self.x) - math.cos(angle_2) * (v.y - self.y) + self.y
+        dx = vertex.x - self.x
+        dy = vertex.y - self.y
 
-        self.v2 = Dot(v2_x, v2_y)
-        assert self.is_on_circle(self.v2)
+        # rotate initial vertex 120 degrees against center
+        turn_angle = 2 * math.pi / 3
+        v2_x = math.cos(turn_angle) * dx - math.sin(turn_angle) * dy + self.x
+        v2_y = math.sin(turn_angle) * dx + math.cos(turn_angle) * dy + self.y
 
-        angle_3 = angle_1 + 2 * math.pi / 3
-        v3_x = math.cos(angle_3) * (v.x - self.x) - math.sin(angle_3) * (v.y - self.y) + self.x
-        v3_y = math.sin(angle_3) * (v.x - self.x) - math.cos(angle_3) * (v.y - self.y) + self.y
+        vertex_2 = Point(v2_x, v2_y)
+        self.validate_point_on_circle(vertex_2)
 
-        self.v3 = Dot(v3_x, v3_y)
-        assert self.is_on_circle(self.v3)
+        # rotate initial vertex 240 degrees against center
+        turn_angle = 4 * math.pi / 3
+        v3_x = math.cos(turn_angle) * dx - math.sin(turn_angle) * dy + self.x
+        v3_y = math.sin(turn_angle) * dx + math.cos(turn_angle) * dy + self.y
+
+        vertex_3 = Point(v3_x, v3_y)
+        self.validate_point_on_circle(vertex_3)
+
+        self.v1 = vertex
+        self.v2 = Point(v2_x, v2_y)
+        self.v3 = Point(v3_x, v3_y)
+
+
+if __name__ == '__main__':
+    figure = InscribedRegularTriangle(0, 1, 1, Point(0, 0))
+    print(figure)
+    circle = plt.Circle(figure.center, figure.raduis, color='red')
+    triangle = plt.Polygon([v.coordinates for v in figure.vertices], color='blue')
+    fig, ax = plt.subplots()
+    ax.add_artist(circle)
+    ax.add_artist(triangle)
+    ax.set_xlim((figure.x - 2 * figure.raduis, figure.x + 2 * figure.raduis))
+    ax.set_ylim((figure.y - 2 * figure.raduis, figure.y + 2 * figure.raduis))
+    ax.set_aspect('equal', adjustable='datalim')
+    plt.show()
