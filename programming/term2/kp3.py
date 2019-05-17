@@ -41,6 +41,11 @@ class Rhombus(Point):
         return f"Rhombus(center={self.center}, diagonals={self.diagonals})"
 
     @property
+    def coordinates(self):
+        x, y, d1, d2 = self.x, self.y, self.d1, self.d2
+        return (x + d1 / 2, y), (x, y + d2 / 2), (x - d1 / 2, y), (x, y - d2 / 2)
+
+    @property
     def center(self):
         return self.coordinates
 
@@ -121,14 +126,47 @@ class InscribedRegularTriangle(Circle):
 
 
 if __name__ == '__main__':
-    figure = InscribedRegularTriangle(0, 1, 1, Point(0, 0))
-    print(figure)
-    circle = plt.Circle(figure.center, figure.raduis, color='red')
-    triangle = plt.Polygon([v.coordinates for v in figure.vertices], color='blue')
-    fig, ax = plt.subplots()
+    x, y, r = input('Enter X, Y, R of circle: ').split()
+    x, y, r = float(x), float(y), float(r)
+    fig_circle = Circle(x, y, r)
+    print(fig_circle)
+
+    circle = plt.Circle((x, y), r, color='red')
+    _, ax = plt.subplots()
+    ax.add_artist(circle)
+    ax.set_xlim((x - 2 * r, x + 2 * r))
+    ax.set_ylim((y - 2 * r, y + 2 * r))
+    ax.set_aspect('equal')
+    plt.title('Circle')
+    plt.show()
+
+    x, y, d1, d2 = input('Enter X, Y, D1, D2 of rhombus: ').split()
+    x, y, d1, d2 = float(x), float(y), float(d1), float(d2)
+    fig_rhombus = Rhombus(x, y, d1, d2)
+    print(fig_rhombus)
+
+    rhombus = plt.Polygon(fig_rhombus.coordinates, color='green')
+    _, ax = plt.subplots()
+    ax.add_artist(rhombus)
+    ax.set_xlim((x - d1, x + d1))
+    ax.set_ylim((y - d2, y + d2))
+    ax.set_aspect('equal')
+    plt.title('Rhombus')
+    plt.show()
+
+    x, y, r = input('Enter X, Y, R of circumference: ').split()
+    x, y, r = float(x), float(y), float(r)
+    a, b = input('Enter X, Y of inscribed triangle (should be on circle): ').split()
+    a, b = float(a), float(b)
+    fig_triangle = InscribedRegularTriangle(x, y, r, Point(a, b))
+    print(fig_triangle)
+
+    circle = plt.Circle(fig_triangle.center, fig_triangle.raduis, color='red')
+    triangle = plt.Polygon([v.coordinates for v in fig_triangle.vertices], color='blue')
+    _, ax = plt.subplots()
     ax.add_artist(circle)
     ax.add_artist(triangle)
-    ax.set_xlim((figure.x - 2 * figure.raduis, figure.x + 2 * figure.raduis))
-    ax.set_ylim((figure.y - 2 * figure.raduis, figure.y + 2 * figure.raduis))
-    ax.set_aspect('equal', adjustable='datalim')
+    ax.set_xlim((x - 2 * r, x + 2 * r))
+    ax.set_ylim((y - 2 * r, y + 2 * r))
+    ax.set_aspect('equal')
     plt.show()
