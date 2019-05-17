@@ -97,20 +97,31 @@ class Dot:
 
         return self
 
+    def copy(self):
+        return Dot(self.i, self.x, self.y)
+
 
 if __name__ == '__main__':
     date_one = Date(2019, 5, 14)
     date_two = Date.from_string('2019-05-15')
     date_three = Date(2012, 12, 20)
 
+    print('Print dates:')
     for d in [date_one, date_two, date_three]:
         print(d.as_string())
+
+    print('Print objects:')
+    for d in [date_one, date_two, date_three]:
         print(d.as_repr())
 
     dot_one = Dot(0, 1, 1)
     dot_two = Dot(1, 1, 2.5)
     dot_three = Dot(1, 2.5, 7.0)
 
+    print('Print dots:')
     for d in [dot_one, dot_two, dot_three]:
         print(d.as_string())
+
+    print('Print objects:')
+    for d in [dot_one, dot_two, dot_three]:
         print(d.as_repr())
