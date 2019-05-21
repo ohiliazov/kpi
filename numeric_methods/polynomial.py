@@ -39,13 +39,28 @@ class Polynomial:
 
         return res[:-1]
 
+    def print_sturm(self, a, b, step=1.0):
+        for p in self.get_sturm_array():
+
+            for x in np.arange(a, b, step):
+
+                res = p(x)
+                if res > 0:
+                    print('+', end=' ')
+                elif res < 0:
+                    print('-', end=' ')
+                else:
+                    print('0', end=' ')
+
+            print()
+
 
 if __name__ == '__main__':
     p = Polynomial(0, -1, 3, 0, -2, 2)
     X = np.linspace(-1.1, 2.9, endpoint=True)
-    sturm = p.get_sturm_array()
+    p.print_sturm(-4, 4, .25)
 
-    for pol in sturm:
+    for pol in p.get_sturm_array():
         F = pol(X)
         plt.plot(X, F)
 
