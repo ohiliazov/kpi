@@ -54,9 +54,16 @@ class DateCollection(UserList):
             raise TypeError('Only ``Date`` is allowed')
         super().insert(i, item)
 
+    def swap(self, k, j):
+        if k >= len(self) or j >= len(self):
+            raise IndexError('Out of bounds')
+        self[k], self[j] = self[j], self[k]
+
     def display(self):
+        print('########')
         for item in self:
             print(item)
+        print('########')
 
     def sort_by_year(self):
         self.sort(key=lambda item: item.year)
@@ -68,12 +75,43 @@ class DateCollection(UserList):
         self.sort(key=lambda item: item.day)
 
     def remove_recent_items(self, threshold: Date):
-        filtered_list = filter(lambda item: item <= threshold, self)
-        self.clear()
-        self.extend(filtered_list)
+        new_list = []
+        for item in self:
+            if item <= threshold:
+                new_list.append(item)
 
-    def save_winter_to_file(self):
-        with open(os.path.join(os.getcwd(), 'kp1.txt'), 'w+') as f:
+        return new_list
+
+    def save_winter_dates_to_file(self):
+        with open(os.path.join(os.getcwd(), 'winter_dates.txt'), 'w+') as f:
             for item in self:
                 if item.month in [12, 1, 2]:
                     f.write(str(item) + '\n')
+
+
+if __name__ == '__main__':
+    dates = DateCollection()
+    length = int(input("Enter array size: "))
+
+    for _ in range(length):
+        d = input("Enter date in format YYYY-MM-DD: ")
+        year, month, day = d.split('-')
+        dates.append(Date(int(year), int(month), int(day)))
+
+    print('Initial array')
+    dates.display()
+
+    print('Sort by year')
+    dates.sort_by_year()
+
+    print('Swap first with last')
+    dates.swap(0, -1)
+    dates.display()
+
+    d = input('Enter date threshold in format YYYY-MM-DD:')
+    year, month, day = d.split('-')
+    dates.remove_recent_items(Date(int(year), int(month), int(day)))
+    dates.display()
+
+    print('Save winter dates into file winter_dates.txt')
+    dates.save_winter_dates_to_file()

@@ -12,7 +12,7 @@ class Point:
 
     @property
     def coordinates(self):
-        return self.x, self.y
+        return (self.x, self.y),
 
     def set_x(self, x):
         if not isinstance(x, (int, float)):
@@ -29,6 +29,12 @@ class Point:
         dx = x - self.x
 
         return math.atan2(dy, dx)
+
+    def get_circle(self, radius):
+        return Circle(self.x, self.y, radius)
+
+    def get_rhombus(self, d1, d2):
+        return Rhombus(self.x, self.y, d1, d2)
 
 
 class Rhombus(Point):
@@ -63,6 +69,12 @@ class Rhombus(Point):
             raise TypeError('Length should be a number')
         self.d2 = d2
 
+    def get_figures(self):
+        return [plt.Polygon(self.coordinates, color='green')]
+
+    def get_point(self):
+        return Point(self.x, self.y)
+
 
 class Circle(Point):
     def __init__(self, x: [int, float], y: [int, float], r: [int, float]):
@@ -73,13 +85,23 @@ class Circle(Point):
         return f"Circle(center={str(self.center)}, radius={round(self.raduis, 2)})"
 
     @property
+    def coordinates(self):
+        return (self.x + self.raduis, self.y + self.raduis), (self.x - self.raduis, self.y - self.raduis)
+
+    @property
     def center(self):
-        return self.coordinates
+        return self.x, self.y
 
     def set_radius(self, r):
         if not isinstance(r, (int, float)):
             raise TypeError('Radius should be a number')
         self.raduis = r
+
+    def get_figures(self):
+        return [plt.Circle(self.center, self.raduis, color='red')]
+
+    def get_point(self):
+        return Point(self.x, self.y)
 
 
 class InscribedRegularTriangle(Circle):
@@ -124,49 +146,61 @@ class InscribedRegularTriangle(Circle):
         self.v2 = Point(v2_x, v2_y)
         self.v3 = Point(v3_x, v3_y)
 
+    def get_figures(self):
+        circle = plt.Circle(self.center, self.raduis, color='red')
+        triangle = plt.Polygon([v.coordinates for v in self.vertices], color='blue')
+
+        return [circle, triangle]
+
+
+class Image:
+    def __init__(self, *args):
+        self.items = []
+
+        for item in args:
+            self.add_item(item)
+
+    def add_item(self, item):
+        self.items.append(item)
+
+    @property
+    def count(self):
+        return len(self.items)
+
+    def get_all_figures(self):
+        figures = []
+        try:
+            for item in self.items:
+                if isinstance(item, (Circle, Rhombus, InscribedRegularTriangle)):
+                    figures.extend(item.get_figures())
+        except:
+            pass
+
+        return figures
+
+    def plot(self):
+        fig, ax = plt.subplots()
+
+        min_x, max_x, min_y, max_y = 0, 0, 0, 0
+        for item in self.items:
+            for coord in item.coordinates:
+                min_x = min(min_x, coord[0])
+                min_y = min(min_y, coord[1])
+                max_x = max(max_x, coord[0])
+                max_y = max(max_y, coord[1])
+
+        for figure in self.get_all_figures():
+            ax.add_artist(figure)
+
+        ax.set_xlim((min_x, max_x))
+        ax.set_ylim((min_y, max_y))
+        ax.set_aspect('equal')
+        plt.show()
+
 
 if __name__ == '__main__':
-    x, y, r = input('Enter X, Y, R of circle: ').split()
-    x, y, r = float(x), float(y), float(r)
-    fig_circle = Circle(x, y, r)
-    print(fig_circle)
-
-    circle = plt.Circle((x, y), r, color='red')
-    _, ax = plt.subplots()
-    ax.add_artist(circle)
-    ax.set_xlim((x - 2 * r, x + 2 * r))
-    ax.set_ylim((y - 2 * r, y + 2 * r))
-    ax.set_aspect('equal')
-    plt.title('Circle')
-    plt.show()
-
-    x, y, d1, d2 = input('Enter X, Y, D1, D2 of rhombus: ').split()
-    x, y, d1, d2 = float(x), float(y), float(d1), float(d2)
-    fig_rhombus = Rhombus(x, y, d1, d2)
-    print(fig_rhombus)
-
-    rhombus = plt.Polygon(fig_rhombus.coordinates, color='green')
-    _, ax = plt.subplots()
-    ax.add_artist(rhombus)
-    ax.set_xlim((x - d1, x + d1))
-    ax.set_ylim((y - d2, y + d2))
-    ax.set_aspect('equal')
-    plt.title('Rhombus')
-    plt.show()
-
-    x, y, r = input('Enter X, Y, R of circumference: ').split()
-    x, y, r = float(x), float(y), float(r)
-    a, b = input('Enter X, Y of inscribed triangle (should be on circle): ').split()
-    a, b = float(a), float(b)
-    fig_triangle = InscribedRegularTriangle(x, y, r, Point(a, b))
-    print(fig_triangle)
-
-    circle = plt.Circle(fig_triangle.center, fig_triangle.raduis, color='red')
-    triangle = plt.Polygon([v.coordinates for v in fig_triangle.vertices], color='blue')
-    _, ax = plt.subplots()
-    ax.add_artist(circle)
-    ax.add_artist(triangle)
-    ax.set_xlim((x - 2 * r, x + 2 * r))
-    ax.set_ylim((y - 2 * r, y + 2 * r))
-    ax.set_aspect('equal')
-    plt.show()
+    p = Point(-1, -2)
+    c = p.get_circle(3)
+    r = Rhombus(1, 2, 3, 4)
+    i = Image(c, r)
+    i.plot()
