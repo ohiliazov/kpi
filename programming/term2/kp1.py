@@ -110,8 +110,8 @@ if __name__ == '__main__':
 
     d = input('Enter date threshold in format YYYY-MM-DD:')
     year, month, day = d.split('-')
-    dates.remove_recent_items(Date(int(year), int(month), int(day)))
-    dates.display()
+    new_dates = dates.remove_recent_items(Date(int(year), int(month), int(day)))
+    print(new_dates)
 
     print('Save winter dates into file winter_dates.txt')
     dates.save_winter_dates_to_file()

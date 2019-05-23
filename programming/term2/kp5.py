@@ -200,7 +200,8 @@ class Image:
 
 if __name__ == '__main__':
     p = Point(-1, -2)
-    c = p.get_circle(3)
+    c = p.get_circle(2)
     r = Rhombus(1, 2, 3, 4)
-    i = Image(c, r)
-    i.plot()
+    i = InscribedRegularTriangle(2, 2, 1, Point(3, 2))
+    img = Image(c, r, i)
+    img.plot()
