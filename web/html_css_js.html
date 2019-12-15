@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Рейтинг лист гравців Го</title>
+    <link rel="stylesheet" href="html_css.css">
+</head>
+<body>
+<header>
+    <h1>Рейтинг лист гравців Го</h1>
+    <p><a onclick="alert('Переходимо в ЄБД!');" href="http://www.europeangodatabase.eu/EGD/createalleuro3.php?country=UA&amp;dgob=false">Рейтинги українців у ЄБД</a></p>
+    <script type="text/javascript">
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rank = urlParams.get('rank');
+
+            if (['gold', 'black', 'blue', 'green', 'yellow', 'white'].indexOf(rank) >= 0) {
+                document.getElementsByTagName('select')[0].value = rank;
+                var rows = document.getElementsByTagName('table')[0].rows;
+
+                for (var i = 1; i < rows.length; i++) {
+                    let rankCell = rows[i].cells[3];
+                    if (!rankCell.classList.contains('rank-'+rank)) {
+                        rows[i].hidden = true;
+                        console.log(rankCell);
+                    }
+                }
+            }
+        }
+    </script>
+</header>
+
+<div>
+    <form>
+        <p><select name="rank">
+            <option selected value=null>Усі</option>
+            <option value="gold">1 про дан та вище</option>
+            <option value="black">1-7 дан</option>
+            <option value="blue">1-4 кю</option>
+            <option value="green">5-9 кю</option>
+            <option value="yellow">10-14 кю</option>
+            <option value="white">15-20 кю</option>
+        </select>
+        <input type="submit" value="Застосувати"></p>
+    </form>
+    <table>
+        <colgroup>
+            <col width="100">
+            <col width="400">
+            <col width="150">
+            <col width="100">
+            <col width="100">
+            <col width="150">
+        </colgroup>
+        <tbody>
+        <tr class="table-header">
+            <th>№ з/п</th>
+            <th>Прізвище та імя гравця</th>
+            <th>Місто</th>
+            <th>Ранг</th>
+            <th>Рейтинг</th>
+            <th>Розряд</th>
+        </tr>
+        <tr>
+            <td class="mono">1</td>
+            <td>Качановський Артем</td>
+            <td>Рівне</td>
+            <td class="mono rank-gold">2 про дан</td>
+            <td class="mono">2760</td>
+            <td>МСУМК</td>
+        </tr>
+        <tr>
+            <td class="mono">2</td>
+            <td>Жураковський Богдан</td>
+            <td>Рівне</td>
+            <td class="mono rank-black">5 дан</td>
+            <td class="mono">2556</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">3</td>
+            <td>Крушельницький Валерій</td>
+            <td>Рівне</td>
+            <td class="mono rank-black">5 дан</td>
+            <td class="mono">2554</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">4</td>
+            <td>Богацький Дмитро</td>
+            <td>Київ</td>
+            <td class="mono rank-black">6 дан</td>
+            <td class="mono">2547</td>
+            <td>МСУМК</td>
+        </tr>
+        <tr>
+            <td class="mono">5</td>
+            <td>Михалюк Юрій</td>
+            <td>Рівне</td>
+            <td class="mono rank-black">4 дан</td>
+            <td class="mono">2464</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">6</td>
+            <td>Лопатюк Костянтин</td>
+            <td>Рівне</td>
+            <td class="mono rank-black">5 дан</td>
+            <td class="mono">2463</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">7</td>
+            <td>Корольов Роман</td>
+            <td>Київ</td>
+            <td class="mono rank-black">5 дан</td>
+            <td class="mono">2451</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">8</td>
+            <td>Качановський Михайло</td>
+            <td>Рівне</td>
+            <td class="mono rank-black">4 дан</td>
+            <td class="mono">2392</td>
+            <td>КМСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">9</td>
+            <td>Яценко Дмитро</td>
+            <td>Київ</td>
+            <td class="mono rank-black">5 дан</td>
+            <td class="mono">2353</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">10</td>
+            <td>Богацький Аркадій</td>
+            <td>Київ</td>
+            <td class="mono rank-black">4 дан</td>
+            <td class="mono">2319</td>
+            <td>МСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">11</td>
+            <td>Гілязов Олександр</td>
+            <td>Харків</td>
+            <td class="mono rank-black">2 дан</td>
+            <td class="mono">2297</td>
+            <td>КМСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">12</td>
+            <td>Лопатенко Костянтин</td>
+            <td>Дніпро</td>
+            <td class="mono rank-black">2 дан</td>
+            <td class="mono">2207</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">13</td>
+            <td>Лисюк Дмитро</td>
+            <td>Київ</td>
+            <td class="mono rank-black">2 дан</td>
+            <td class="mono">2198</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">14</td>
+            <td>Овсієнко Всеволод</td>
+            <td>Київ</td>
+            <td class="mono rank-black">1 дан</td>
+            <td class="mono">2196</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">15</td>
+            <td>Русановський Дмитро</td>
+            <td>Київ</td>
+            <td class="mono rank-black">1 дан</td>
+            <td class="mono">2195</td>
+            <td>1 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">16</td>
+            <td>Малко Ярослав</td>
+            <td>Рівне</td>
+            <td class="mono rank-black">1 дан</td>
+            <td class="mono">2147</td>
+            <td>КМСУ</td>
+        </tr>
+        <tr>
+            <td class="mono">17</td>
+            <td>Петрашевська Ніка</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">1 кю</td>
+            <td class="mono">2006</td>
+            <td>1 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">18</td>
+            <td>Ліверинов Валерій</td>
+            <td>Одеса</td>
+            <td class="mono rank-blue">1 кю</td>
+            <td class="mono">2004</td>
+            <td>1 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">19</td>
+            <td>Вдовін Олександр</td>
+            <td>Кривий Ріг</td>
+            <td class="mono rank-blue">2 кю</td>
+            <td class="mono">1971</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">20</td>
+            <td>Малко Олеся</td>
+            <td>Рівне</td>
+            <td class="mono rank-blue">2 кю</td>
+            <td class="mono">1964</td>
+            <td>1 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">21</td>
+            <td>Тодоров Артем</td>
+            <td>Дніпро</td>
+            <td class="mono rank-blue">3 кю</td>
+            <td class="mono">1883</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">22</td>
+            <td>Мельник Анна</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">3 кю</td>
+            <td class="mono">1869</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">23</td>
+            <td>Крушельницька Поліна</td>
+            <td>Рівне</td>
+            <td class="mono rank-blue">3 кю</td>
+            <td class="mono">1848</td>
+            <td>1 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">24</td>
+            <td>Пелех Віталій</td>
+            <td>Рівне</td>
+            <td class="mono rank-blue">3 кю</td>
+            <td class="mono">1840</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">25</td>
+            <td>Морозов Данило</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">3 кю</td>
+            <td class="mono">1837</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">26</td>
+            <td>Русановський Євген</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">3 кю</td>
+            <td class="mono">1812</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">27</td>
+            <td>Шередеко Георгій</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">4 кю</td>
+            <td class="mono">1794</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">28</td>
+            <td>Тарасенко Світлана</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">4 кю</td>
+            <td class="mono">1778</td>
+            <td>1 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">29</td>
+            <td>Щепанюк Олександр</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">4 кю</td>
+            <td class="mono">1744</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">30</td>
+            <td>Приходько Иван</td>
+            <td>Київ</td>
+            <td class="mono rank-blue">4 кю</td>
+            <td class="mono">1740</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">31</td>
+            <td>Стефанович Дмитро</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">5 кю</td>
+            <td class="mono">1699</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">32</td>
+            <td>Бережняк Максим</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">5 кю</td>
+            <td class="mono">1626</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">33</td>
+            <td>Гресько Данило</td>
+            <td>Київ</td>
+            <td class="mono rank-green">5 кю</td>
+            <td class="mono">1623</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">34</td>
+            <td>Реділа Ілона</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">5 кю</td>
+            <td class="mono">1616</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">35</td>
+            <td>Качановський Володимир</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">5 кю</td>
+            <td class="mono">1607</td>
+            <td>ЗТУ</td>
+        </tr>
+        <tr>
+            <td class="mono">36</td>
+            <td>Макагон Павло</td>
+            <td>Одеса</td>
+            <td class="mono rank-green">5 кю</td>
+            <td class="mono">1602</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">37</td>
+            <td>Супрун Сергій</td>
+            <td>Київ</td>
+            <td class="mono rank-green">6 кю</td>
+            <td class="mono">1592</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">38</td>
+            <td>Гальченко Григорій</td>
+            <td>Київ</td>
+            <td class="mono rank-green">6 кю</td>
+            <td class="mono">1532</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">39</td>
+            <td>Челишев Олексій</td>
+            <td>Херсон</td>
+            <td class="mono rank-green">6 кю</td>
+            <td class="mono">1513</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">40</td>
+            <td>Симоненко Вікторія</td>
+            <td>Київ</td>
+            <td class="mono rank-green">7 кю</td>
+            <td class="mono">1499</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">41</td>
+            <td>Абросімов Євген</td>
+            <td>Харків</td>
+            <td class="mono rank-green">7 кю</td>
+            <td class="mono">1465</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">42</td>
+            <td>Пушня Юрій</td>
+            <td>Київ</td>
+            <td class="mono rank-green">7 кю</td>
+            <td class="mono">1444</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">43</td>
+            <td>Кушнерік Роман</td>
+            <td>Одеса</td>
+            <td class="mono rank-green">7 кю</td>
+            <td class="mono">1413</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">44</td>
+            <td>Сичінська Юлія</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">8 кю</td>
+            <td class="mono">1386</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">45</td>
+            <td>Онищук Богуслав</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">9 кю</td>
+            <td class="mono">1369</td>
+            <td>3 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">46</td>
+            <td>Ромащенко
+                Анастасія</td>
+            <td>Одеса</td>
+            <td class="mono rank-green">8 кю</td>
+            <td class="mono">1363</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">47</td>
+            <td>Качановська Eлена</td>
+            <td>Рівне</td>
+            <td class="mono rank-green">8 кю</td>
+            <td class="mono">1338</td>
+            <td>2 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">48</td>
+            <td>Мінаєв Микита</td>
+            <td>Київ</td>
+            <td class="mono rank-green">9 кю</td>
+            <td class="mono">1294</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">49</td>
+            <td>Дончак Олексій</td>
+            <td>Київ</td>
+            <td class="mono rank-green">9 кю</td>
+            <td class="mono">1255</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">50</td>
+            <td>Лисенко Єгор</td>
+            <td>Київ</td>
+            <td class="mono rank-green">9 кю</td>
+            <td class="mono">1232</td>
+            <td>3 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">51</td>
+            <td>Фоломієв Олег</td>
+            <td>Одеса</td>
+            <td class="mono rank-green">9 кю</td>
+            <td class="mono">1218</td>
+            <td>3 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">52</td>
+            <td>Петрашевський Данил</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">10 кю</td>
+            <td class="mono">1186</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">53</td>
+            <td>Демидов Мирослав</td>
+            <td>Рівне</td>
+            <td class="mono rank-yellow">10 кю</td>
+            <td class="mono">1181</td>
+            <td>3 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">54</td>
+            <td>Чернова Марія</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">10 кю</td>
+            <td class="mono">1170</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">55</td>
+            <td>Бірюков Юрій</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">10 кю</td>
+            <td class="mono">1166</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">56</td>
+            <td>Семещук Андрій</td>
+            <td>Рівне</td>
+            <td class="mono rank-yellow">10 кю</td>
+            <td class="mono">1152</td>
+            <td>3 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">57</td>
+            <td>Сидоров Кирило</td>
+            <td>Одеса</td>
+            <td class="mono rank-yellow">10 кю</td>
+            <td class="mono">1137</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">58</td>
+            <td>Бабіч Олег</td>
+            <td>Миколаїв</td>
+            <td class="mono rank-yellow">11 кю</td>
+            <td class="mono">1086</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">59</td>
+            <td>Проценко
+                Володимир</td>
+            <td>Одеса</td>
+            <td class="mono rank-yellow">11 кю</td>
+            <td class="mono">1085</td>
+            <td>3 сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">60</td>
+            <td>Придаткевич
+                Петро</td>
+            <td>Тернопіль</td>
+            <td class="mono rank-yellow">11 кю</td>
+            <td class="mono">1080</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">61</td>
+            <td>Калінін Іван</td>
+            <td>Херсон</td>
+            <td class="mono rank-yellow">11 кю</td>
+            <td class="mono">1051</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">62</td>
+            <td>Зінов’єв Михайло</td>
+            <td>Харків</td>
+            <td class="mono rank-yellow">11 кю</td>
+            <td class="mono">1040</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">63</td>
+            <td>Власенко Олександра</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">11 кю</td>
+            <td class="mono">1009</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">64</td>
+            <td>Макагон Петро</td>
+            <td>Одеса</td>
+            <td class="mono rank-yellow">12 кю</td>
+            <td class="mono">993</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">65</td>
+            <td>Сівер Єкатерина</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">12 кю</td>
+            <td class="mono">990</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">66</td>
+            <td>Дороніна Марина</td>
+            <td>Рівне</td>
+            <td class="mono rank-yellow">12 кю</td>
+            <td class="mono">979</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">67</td>
+            <td>Вєсіч Софія</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">12 кю</td>
+            <td class="mono">949</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">68</td>
+            <td>Петрик Данило</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">12 кю</td>
+            <td class="mono">942</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">69</td>
+            <td>Файфура Орест</td>
+            <td>Рівне</td>
+            <td class="mono rank-yellow">12 кю</td>
+            <td class="mono">913</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">70</td>
+            <td>Грабарчук Єва</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">895</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">71</td>
+            <td>Рекстиньш Володимир</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">893</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">72</td>
+            <td>Красівський Іван</td>
+            <td>Харків</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">885</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">73</td>
+            <td>Фенчак Анастасія</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">880</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">74</td>
+            <td>Холод Устін</td>
+            <td>Одеса</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">871</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">75</td>
+            <td>Зюбін Нікіта</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">856</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">76</td>
+            <td>Коцюруба Микола</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">850</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">77</td>
+            <td>Артамонов Михайло</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">850</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">78</td>
+            <td>Богатиренко Єлизавета</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">840</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">79</td>
+            <td>Науменко Роман</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">832</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">80</td>
+            <td>Овсієнко Тимофій</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">807</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">81</td>
+            <td>Савицький Август</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">13 кю</td>
+            <td class="mono">804</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">82</td>
+            <td>Юденко Вадим</td>
+            <td>Київ</td>
+            <td class="mono rank-yellow">14 кю</td>
+            <td class="mono">728</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">83</td>
+            <td>Мунтян Костянтин</td>
+            <td>Ширяєве</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">668</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">84</td>
+            <td>Коцюруба Софія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">661</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">85</td>
+            <td>Радченко Владислава</td>
+            <td>Рівне</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">644</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">86</td>
+            <td>Батуріна Раїса</td>
+            <td>Харків</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">642</td>
+            <td>1 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">87</td>
+            <td>Мананніков Нікіта</td>
+            <td>Київ</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">618</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">88</td>
+            <td>Милов Георгій</td>
+            <td>Київ</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">617</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">89</td>
+            <td>Сергієнко Павло</td>
+            <td>Київ</td>
+            <td class="mono rank-white">15 кю</td>
+            <td class="mono">614</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">90</td>
+            <td>Вовчок Ян</td>
+            <td>Київ</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">590</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">91</td>
+            <td>Рибаков Артем</td>
+            <td>Київ</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">570</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">92</td>
+            <td>Кобзар Гліб</td>
+            <td>Харків</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">554</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">93</td>
+            <td>Бутковський Олексій</td>
+            <td>Харків</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">551</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">94</td>
+            <td>Науменко Марія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">550</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">95</td>
+            <td>Ігнатенко Анастасія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">544</td>
+            <td>2 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">96</td>
+            <td>Завадський Іван</td>
+            <td>Київ</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">523</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">97</td>
+            <td>Власенко Влада</td>
+            <td>Київ</td>
+            <td class="mono rank-white">16 кю</td>
+            <td class="mono">521</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">98</td>
+            <td>Олійник Анна</td>
+            <td>Київ</td>
+            <td class="mono rank-white">17 кю</td>
+            <td class="mono">456</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">99</td>
+            <td>Чернова Віра</td>
+            <td>Київ</td>
+            <td class="mono rank-white">17 кю</td>
+            <td class="mono">455</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">100</td>
+            <td>Пеньков Дмитро</td>
+            <td>Харків</td>
+            <td class="mono rank-white">17 кю</td>
+            <td class="mono">454</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">101</td>
+            <td>Бондарєв Євгеній</td>
+            <td>Одеса</td>
+            <td class="mono rank-white">17 кю</td>
+            <td class="mono">452</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">102</td>
+            <td>Йовенко Назарій</td>
+            <td>Ніжин</td>
+            <td class="mono rank-white">17 кю</td>
+            <td class="mono">427</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">103</td>
+            <td>Поздняков Олексій</td>
+            <td>Одеса</td>
+            <td class="mono rank-white">17 кю</td>
+            <td class="mono">401</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">104</td>
+            <td>Іванов Роман</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">399</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">105</td>
+            <td>Русановська Наталія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">390</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">106</td>
+            <td>Терещук Давид</td>
+            <td>Кременець</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">389</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">107</td>
+            <td>Сокур Артем</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">383</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">108</td>
+            <td>Олійник Катерина</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">371</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">109</td>
+            <td>Грачов Роман</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">362</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">110</td>
+            <td>Троян Арсеній</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">336</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">111</td>
+            <td>Забігайло Анна</td>
+            <td>Київ</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">327</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">112</td>
+            <td>Сироватко Максим</td>
+            <td>Харків</td>
+            <td class="mono rank-white">18 кю</td>
+            <td class="mono">323</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">113</td>
+            <td>Остапенко Надія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">293</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">114</td>
+            <td>Сівер Тетяна</td>
+            <td>Київ</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">274</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">115</td>
+            <td>Шумакова Вікторія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">261</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">116</td>
+            <td>Швачко Гліб</td>
+            <td>Харків</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">260</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">117</td>
+            <td>Кривов Данило</td>
+            <td>Київ</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">257</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">118</td>
+            <td>Жиляк Іван</td>
+            <td>Харків</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">251</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">119</td>
+            <td>Наконечний Тимофій</td>
+            <td>Київ</td>
+            <td class="mono rank-white">19 кю</td>
+            <td class="mono">248</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">120</td>
+            <td>Ілюшко Святослав</td>
+            <td>Харків</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">173</td>
+            <td>3 юн. сп. р.</td>
+        </tr>
+        <tr>
+            <td class="mono">121</td>
+            <td>Кучер Дмитро</td>
+            <td>Харків</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">112</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">122</td>
+            <td>Корнєєв Михайло</td>
+            <td>Київ</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">112</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">123</td>
+            <td>Шльонський Василь</td>
+            <td>Київ</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">107</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">124</td>
+            <td>Макаренко Євгеній</td>
+            <td>Київ</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">100</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">125</td>
+            <td>Романова Софія</td>
+            <td>Київ</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">100</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="mono">126</td>
+            <td>Потапенко Поліна</td>
+            <td>Київ</td>
+            <td class="mono rank-white">20 кю</td>
+            <td class="mono">100</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

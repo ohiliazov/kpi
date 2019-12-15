@@ -1,0 +1,83 @@
+body {
+  background-color: darkkhaki;
+  text-align: center;
+}
+
+p {
+  font-family: verdana;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+table {
+  background-color: ivory;
+  margin-left:auto;
+  margin-right:auto;
+  border-spacing: 0;
+}
+
+.table-header {
+  background-color: forestgreen;
+}
+
+th, td {
+  padding: 6px 10px;
+  spacing: 0;
+  border: 0;
+}
+
+h1, th, td {
+  text-align: center;
+}
+
+.mono {
+  font-weight: bold;
+  font-family: monospace;
+}
+
+td:hover {
+  background-color: white;
+  color: black;
+}
+
+.rank-gold {
+  background-color: gold;
+  color: black;
+}
+.rank-black {
+  background-color: black;
+  color: white;
+}
+.rank-blue {
+  background-color: darkblue;
+  color: white;
+}
+.rank-green {
+  background-color: green;
+  color: white;
+}
+.rank-yellow {
+  background-color: yellow;
+  color: black;
+}
+.rank-white {
+  background-color: white;
+  color: black;
+}
+
+input, select {
+    width: 100 px;
+    box-sizing: border-box;
+    height: 32px;
+    padding: 0px 12px;
+    border: 0;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: normal;
+    background-color: ivory;
+    color: black;
+    outline: none;
+    box-shadow: 0;
+}
