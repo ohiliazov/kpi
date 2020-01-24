@@ -56,12 +56,12 @@
         </colgroup>
         <tbody>
         <tr class="table-header">
-            <th onclick="sortTable(0)">№ з/п</th>
-            <th onclick="sortTable(1)">Прізвище та імя гравця</th>
-            <th onclick="sortTable(2)">Місто</th>
-            <th onclick="sortTable(3)">Ранг</th>
-            <th onclick="sortTable(4)">Рейтинг</th>
-            <th onclick="sortTable(5)">Розряд</th>
+            <th onclick="sortTable(0, 1)">№ з/п</th>
+            <th onclick="sortTable(1, 0)">Прізвище та імя гравця</th>
+            <th onclick="sortTable(2, 0)">Місто</th>
+            <th onclick="sortTable(3, 1)">Ранг</th>
+            <th onclick="sortTable(4, 1)">Рейтинг</th>
+            <th onclick="sortTable(5, 0)">Розряд</th>
         </tr>
         <tr>
             <td class="mono">1</td>
@@ -1082,10 +1082,22 @@
 </div>
 <script>
 
-    function sortTable(n) {
-        var table, rows, switching, i, x, y, dir, shouldSwitch, switchcount = 0;
+    function sortTable(n, toInt) {
+        var table, headers, rows, switching, i, x, y, dir, shouldSwitch, switchcount = 0;
         table = document.getElementById("myTable");
         switching = true;
+
+        headers = table.rows[0].getElementsByTagName("th");
+
+        for (i = 0; i < headers.length; i++) {
+            if (i == n) {
+                table.rows[0].getElementsByTagName("th")[i].style.background = 'blue';
+                table.rows[0].getElementsByTagName("th")[i].style.color = 'white';
+            } else {
+                table.rows[0].getElementsByTagName("th")[i].style.background = 'green';
+                table.rows[0].getElementsByTagName("th")[i].style.color = 'black';
+            }
+        }
 
         dir = "asc"
         while (switching) {
@@ -1097,16 +1109,21 @@
 
                 shouldSwitch = false;
 
-                x = rows[i].getElementsByTagName("td")[n];
-                y = rows[i + 1].getElementsByTagName("td")[n];
+                x = rows[i].getElementsByTagName("td")[n].innerHTML.toLowerCase();
+                y = rows[i + 1].getElementsByTagName("td")[n].innerHTML.toLowerCase();
+
+                if (!!toInt) {
+                    x = parseInt(x);
+                    y = parseInt(y);
+                }
 
                 if (dir == "asc") {
-                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    if (x > y) {
                         shouldSwitch = true;
                         break;
                     }
                 } else if (dir == "desc") {
-                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    if (x < y) {
                         shouldSwitch = true;
                         break;
                     }
@@ -1124,6 +1141,7 @@
                 }
             }
         }
+
     }
 
 </script>
