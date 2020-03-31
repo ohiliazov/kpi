@@ -29,12 +29,20 @@ class TransportProblem:
         return self.trans_cost + self.prod_cost
 
     @property
+    def prod_expr(self):
+        return cp.sum(cp.multiply(self.prod_cost, cp.sum(self.x, axis=0)))
+
+    @property
     def prod_value(self):
-        return np.sum(np.multiply(self.prod_cost, self.x.value))
+        return self.prod_expr.value
+
+    @property
+    def trans_expr(self):
+        return cp.sum(cp.multiply(self.trans_cost, self.x))
 
     @property
     def trans_value(self):
-        return np.sum(np.multiply(self.trans_cost, self.x.value))
+        return self.trans_expr.value
 
     @property
     def expr(self):
@@ -44,9 +52,13 @@ class TransportProblem:
     def constraints(self):
         raise NotImplementedError
 
-    def solve(self, verbose=False):
+    @property
+    def total_value(self):
+        return self.expr.value
+
+    def solve(self, solver=cp.CPLEX, verbose=False):
         self.prob = cp.Problem(cp.Minimize(self.expr), self.constraints)
-        self.prob.solve(solver=cp.CPLEX, verbose=verbose)
+        self.prob.solve(solver=solver, verbose=verbose)
 
 
 class LinearTransportProblem(TransportProblem):
@@ -65,18 +77,14 @@ class LinearTransportProblem(TransportProblem):
 
     @property
     def expr(self):
-        return cp.sum(cp.multiply(self.trans_cost, self.x))
-
-    @property
-    def total_value(self):
-        return self.trans_value + self.prod_value
+        return self.trans_expr + self.prod_expr
 
     @property
     def constraints(self):
         return [
+            self.x >= 0,
             cp.sum(self.x, axis=0) <= self.capacity,
             cp.sum(self.x, axis=1) >= self.demand,
-            self.x >= 0,
         ]
 
     def print(self):
@@ -99,6 +107,7 @@ class NonlinearTransportProblem(TransportProblem):
             upper_demand: np.ndarray,
             shortage: np.ndarray,
             overflow: np.ndarray,
+            init_value: np.ndarray,
     ):
         super().__init__(sources, targets, capacity, prod_cost, trans_cost)
         assert lower_demand.shape == (targets, )
@@ -110,34 +119,28 @@ class NonlinearTransportProblem(TransportProblem):
         self.demand = (lower_demand + upper_demand) / 2
         self.shortage = shortage
         self.overflow = overflow
-
-    @property
-    def penalty_const(self):
-        return (self.overflow + self.shortage) / (self.upper_demand - self.lower_demand) / 2
+        self.x = cp.Variable((n, m), integer=True, value=init_value)
 
     @property
     def penalty_expr(self):
+        penalty_const = (self.overflow + self.shortage) / (self.upper_demand - self.lower_demand) / 2
         expr0 = cp.multiply(self.shortage, self.demand - cp.sum(self.x, axis=1))
         expr1 = cp.square(cp.sum(self.x, axis=1) - self.lower_demand)
-        return cp.sum(expr0 + cp.multiply(expr1, self.penalty_const))
-
-    @property
-    def expr(self):
-        return cp.sum(cp.multiply(self.trans_cost, self.x)) + self.penalty_expr
+        return cp.sum(expr0 + cp.multiply(expr1, penalty_const))
 
     @property
     def penalty_value(self):
         return self.penalty_expr.value
 
     @property
-    def total_value(self):
-        return self.trans_value + self.prod_value + self.penalty_value
+    def expr(self):
+        return self.trans_expr + self.prod_expr + self.penalty_expr
 
     @property
     def constraints(self):
         return [
-            cp.sum(self.x, axis=0) <= self.capacity,
             self.x >= 0,
+            cp.sum(self.x, axis=0) <= self.capacity,
         ]
 
     def print(self):
@@ -146,7 +149,8 @@ class NonlinearTransportProblem(TransportProblem):
               f"production = {self.prod_value:.2f}, "
               f"transport = {self.trans_value:.2f}, "
               f"penalty = {self.penalty_value:.2f}")
-        print(f"Optimal routes: \n{self.x.value.astype(int)}\n")
+        print(f"Optimal routes: \n{self.x.value.astype(int)}")
+        print(f"Optimal demand satisfaction: {np.sum(self.x.value, axis=1).astype(int)}\n")
 
 
 m, n = 4, 4
@@ -181,7 +185,7 @@ for a, p in zip(a_list, p_list):
     linear_solver = LinearTransportProblem(m, n, a, b, p, c)
     linear_solver.solve()
     linear_solver.print()
-    nonlinear_solver = NonlinearTransportProblem(m, n, a, p, c, lb, ub, r, s)
+    nonlinear_solver = NonlinearTransportProblem(m, n, a, p, c, lb, ub, r, s, linear_solver.x.value.astype(int))
     nonlinear_solver.solve()
     nonlinear_solver.print()
 
