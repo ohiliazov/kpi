@@ -13,8 +13,8 @@ class TransportProblem:
     ):
         assert isinstance(sources, int) and sources > 0
         assert isinstance(targets, int) and targets > 0
-        assert capacity.shape == (sources, )
-        assert prod_cost.shape == (sources, )
+        assert capacity.shape == (sources,)
+        assert prod_cost.shape == (sources,)
         assert trans_cost.shape == (targets, sources)
         self.sources = sources
         self.targets = targets
@@ -63,16 +63,16 @@ class TransportProblem:
 
 class LinearTransportProblem(TransportProblem):
     def __init__(
-            self,
-            sources: int,
-            targets: int,
-            capacity: np.ndarray,
-            demand: np.ndarray,
-            prod_cost: np.ndarray,
-            trans_cost: np.ndarray,
+        self,
+        sources: int,
+        targets: int,
+        capacity: np.ndarray,
+        demand: np.ndarray,
+        prod_cost: np.ndarray,
+        trans_cost: np.ndarray,
     ):
         super().__init__(sources, targets, capacity, prod_cost, trans_cost)
-        assert demand.shape == (targets, )
+        assert demand.shape == (targets,)
         self.demand = demand
 
     @property
@@ -88,32 +88,34 @@ class LinearTransportProblem(TransportProblem):
         ]
 
     def print(self):
-        print(f"Linear result: "
-              f"total = {self.total_value:.2f} "
-              f"production = {self.prod_value:.2f}, "
-              f"transport = {self.trans_value:.2f}")
+        print(
+            f"Linear result: "
+            f"total = {self.total_value:.2f} "
+            f"production = {self.prod_value:.2f}, "
+            f"transport = {self.trans_value:.2f}"
+        )
         print(f"Optimal routes: \n{self.x.value.astype(int)}")
 
 
 class NonlinearTransportProblem(TransportProblem):
     def __init__(
-            self,
-            sources: int,
-            targets: int,
-            capacity: np.ndarray,
-            prod_cost: np.ndarray,
-            trans_cost: np.ndarray,
-            lower_demand: np.ndarray,
-            upper_demand: np.ndarray,
-            shortage: np.ndarray,
-            overflow: np.ndarray,
-            init_value: np.ndarray,
+        self,
+        sources: int,
+        targets: int,
+        capacity: np.ndarray,
+        prod_cost: np.ndarray,
+        trans_cost: np.ndarray,
+        lower_demand: np.ndarray,
+        upper_demand: np.ndarray,
+        shortage: np.ndarray,
+        overflow: np.ndarray,
+        init_value: np.ndarray,
     ):
         super().__init__(sources, targets, capacity, prod_cost, trans_cost)
-        assert lower_demand.shape == (targets, )
-        assert upper_demand.shape == (targets, )
-        assert shortage.shape == (targets, )
-        assert overflow.shape == (targets, )
+        assert lower_demand.shape == (targets,)
+        assert upper_demand.shape == (targets,)
+        assert shortage.shape == (targets,)
+        assert overflow.shape == (targets,)
         self.lower_demand = lower_demand
         self.upper_demand = upper_demand
         self.demand = (lower_demand + upper_demand) / 2
@@ -144,11 +146,13 @@ class NonlinearTransportProblem(TransportProblem):
         ]
 
     def print(self):
-        print(f"Nonlinear result: "
-              f"total = {self.total_value:.2f}, "
-              f"production = {self.prod_value:.2f}, "
-              f"transport = {self.trans_value:.2f}, "
-              f"penalty = {self.penalty_value:.2f}")
+        print(
+            f"Nonlinear result: "
+            f"total = {self.total_value:.2f}, "
+            f"production = {self.prod_value:.2f}, "
+            f"transport = {self.trans_value:.2f}, "
+            f"penalty = {self.penalty_value:.2f}"
+        )
         print(f"Optimal routes: \n{self.x.value.astype(int)}")
         print(f"Optimal demand satisfaction: {np.sum(self.x.value, axis=1).astype(int)}\n")
 
@@ -156,29 +160,14 @@ class NonlinearTransportProblem(TransportProblem):
 m, n = 4, 4
 
 b = np.array([400, 800, 200, 800])
-c = np.array([
-    [5, 3, 6, 2],
-    [3, 4, 5, 6],
-    [7, 5, 6, 4],
-    [4, 8, 5, 3],
-])
+c = np.array([[5, 3, 6, 2], [3, 4, 5, 6], [7, 5, 6, 4], [4, 8, 5, 3],])
 lb = np.array([300, 700, 200, 600])
 ub = np.array([500, 1000, 400, 1000])
 r = np.array([8, 10, 19, 6]) * 3
 s = np.array([5, 6, 6, 3]) * 3
 
-a_list = np.array([
-    [900, 700, 600, 0],
-    [500, 1100, 600, 0],
-    [500, 700, 1000, 0],
-    [500, 700, 600, 400],
-])
-p_list = np.array([
-    [12, 3, 6, 0],
-    [9, 5, 6, 0],
-    [9, 3, 11, 0],
-    [9, 3, 6, 10],
-])
+a_list = np.array([[900, 700, 600, 0], [500, 1100, 600, 0], [500, 700, 1000, 0], [500, 700, 600, 400]])
+p_list = np.array([[12, 3, 6, 0], [9, 5, 6, 0], [9, 3, 11, 0], [9, 3, 6, 10]])
 all_results = []
 eye = np.eye(n)
 for a, p in zip(a_list, p_list):
