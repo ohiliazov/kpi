@@ -183,10 +183,11 @@ all_results = []
 eye = np.eye(n)
 for a, p in zip(a_list, p_list):
     linear_solver = LinearTransportProblem(m, n, a, b, p, c)
-    linear_solver.solve()
+    linear_solver.solve(verbose=True)
     linear_solver.print()
-    nonlinear_solver = NonlinearTransportProblem(m, n, a, p, c, lb, ub, r, s, linear_solver.x.value.astype(int))
-    nonlinear_solver.solve()
+    x = linear_solver.x.value.astype(int)
+    nonlinear_solver = NonlinearTransportProblem(m, n, a, p, c, lb, ub, r, s, x)
+    nonlinear_solver.solve(verbose=True)
     nonlinear_solver.print()
 
     all_results.append([linear_solver, nonlinear_solver])
