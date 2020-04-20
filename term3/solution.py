@@ -83,8 +83,8 @@ class LinearTransportProblem(TransportProblem):
     def constraints(self):
         return [
             self.x >= 0,
-            cp.sum(self.x, axis=0) <= self.capacity,
-            cp.sum(self.x, axis=1) >= self.demand,
+            cp.sum(self.x, axis=0) == self.capacity,
+            cp.sum(self.x, axis=1) == self.demand,
         ]
 
     def print(self):
@@ -142,7 +142,7 @@ class NonlinearTransportProblem(TransportProblem):
     def constraints(self):
         return [
             self.x >= 0,
-            cp.sum(self.x, axis=0) <= self.capacity,
+            cp.sum(self.x, axis=0) == self.capacity,
         ]
 
     def print(self):
@@ -157,6 +157,23 @@ class NonlinearTransportProblem(TransportProblem):
         print(f"Optimal demand satisfaction: {np.sum(self.x.value, axis=1).astype(int)}\n")
 
 
+def solve(m, n, a, b, p, c, lb, ub, r, s, verbose: bool, to_print: bool):
+    linear_solver = LinearTransportProblem(m, n, a, b, p, c)
+    linear_solver.solve(verbose=verbose)
+
+    if to_print:
+        linear_solver.print()
+    x = linear_solver.x.value.astype(int)
+    nonlinear_solver = NonlinearTransportProblem(m, n, a, p, c, lb, ub, r, s, x)
+    nonlinear_solver.solve(verbose=verbose)
+
+    if to_print:
+        nonlinear_solver.print()
+        print(nonlinear_solver.x.value - linear_solver.x.value)
+
+    return linear_solver.total_value, nonlinear_solver.total_value
+
+
 m, n = 4, 4
 
 b = np.array([400, 800, 200, 800])
@@ -167,16 +184,102 @@ r = np.array([8, 10, 19, 6]) * 3
 s = np.array([5, 6, 6, 3]) * 3
 
 a_list = np.array([[900, 700, 600, 0], [500, 1100, 600, 0], [500, 700, 1000, 0], [500, 700, 600, 400]])
-p_list = np.array([[12, 3, 6, 0], [9, 5, 6, 0], [9, 3, 11, 0], [9, 3, 6, 10]])
-all_results = []
-eye = np.eye(n)
-for a, p in zip(a_list, p_list):
-    linear_solver = LinearTransportProblem(m, n, a, b, p, c)
-    linear_solver.solve(verbose=True)
-    linear_solver.print()
-    x = linear_solver.x.value.astype(int)
-    nonlinear_solver = NonlinearTransportProblem(m, n, a, p, c, lb, ub, r, s, x)
-    nonlinear_solver.solve(verbose=True)
-    nonlinear_solver.print()
+p_list = np.array([[12, 3, 6, 10], [9, 5, 6, 10], [9, 3, 11, 10], [9, 3, 6, 10]])
 
-    all_results.append([linear_solver, nonlinear_solver])
+
+linear_values = []
+nonlinear_values = []
+for a, p in zip(a_list, p_list):
+    linear_value, nonlinear_value = solve(m, n, a, b, p, c, lb, ub, r, s, verbose=True, to_print=True)
+    linear_values.append(linear_value)
+    nonlinear_values.append(nonlinear_value)
+
+linear_values = np.array(linear_values)
+nonlinear_values = np.array(nonlinear_values)
+print(nonlinear_values)
+
+print("Performing sensitivity check by transportation cost...")
+sensitivity_max = []
+sensitivity_upper = []
+sensitivity_lower = []
+
+for idx, row in enumerate(np.eye(m*n).reshape(m*n, m, n)):
+    values_max = []
+    values_upper = []
+    values_lower = []
+
+    for a, p in zip(a_list, p_list):
+        c_row = c.copy()
+        c_row[row == 1] = 10000
+        max_linear, max_nonlinear = solve(m, n, a, b, p, c_row, lb, ub, r, s, verbose=False, to_print=False)
+        upper_linear, upper_nonlinear = solve(m, n, a, b, p, c - row, lb, ub, r, s, verbose=False, to_print=False)
+        lower_linear, lower_nonlinear = solve(m, n, a, b, p, c + row, lb, ub, r, s, verbose=False, to_print=False)
+
+        values_max.append(max_nonlinear)
+        values_upper.append(upper_nonlinear)
+        values_lower.append(lower_nonlinear)
+
+    sensitivity_max.append(np.array(values_max) - nonlinear_values)
+    sensitivity_upper.append(np.array(values_upper) - nonlinear_values)
+    sensitivity_lower.append(np.array(values_lower) - nonlinear_values)
+
+
+sensitivity_max = np.array(sensitivity_max).T.reshape(4, m, n)
+print("\nRemoved route (increased each cost to 10000):")
+print(sensitivity_max)
+print(np.average(sensitivity_max, axis=(1, 2)))
+
+sensitivity_upper = np.array(sensitivity_upper).T.reshape(4, m, n)
+print("\nRemoved route (increased each cost by 1):")
+print(sensitivity_upper)
+print(np.average(sensitivity_upper, axis=(1, 2)))
+
+sensitivity_lower = np.array(sensitivity_lower).T.reshape(4, m, n)
+print("\nRemoved route (decreased each cost by 1):")
+print(sensitivity_lower)
+print(np.average(sensitivity_lower, axis=(1, 2)))
+
+print("Performing sensitivity check...")
+r_sensitivity_upper = []
+r_sensitivity_lower = []
+s_sensitivity_upper = []
+s_sensitivity_lower = []
+
+for idx, row in enumerate(np.eye(m)):
+    r_values_upper = []
+    r_values_lower = []
+    s_values_upper = []
+    s_values_lower = []
+
+    for a, p in zip(a_list, p_list):
+        r_upper_linear, r_upper_nonlinear = solve(m, n, a, b, p, c, lb, ub, r + row, s, verbose=False, to_print=False)
+        r_lower_linear, r_lower_nonlinear = solve(m, n, a, b, p, c, lb, ub, r - row, s, verbose=False, to_print=False)
+        s_upper_linear, s_upper_nonlinear = solve(m, n, a, b, p, c, lb, ub, r, s + row, verbose=False, to_print=False)
+        s_lower_linear, s_lower_nonlinear = solve(m, n, a, b, p, c, lb, ub, r, s - row, verbose=False, to_print=False)
+
+        r_values_upper.append(r_upper_nonlinear)
+        r_values_lower.append(r_lower_nonlinear)
+        s_values_upper.append(s_upper_nonlinear)
+        s_values_lower.append(s_lower_nonlinear)
+
+    r_sensitivity_upper.append(np.array(r_values_upper) - nonlinear_values)
+    r_sensitivity_lower.append(np.array(r_values_lower) - nonlinear_values)
+    s_sensitivity_upper.append(np.array(s_values_upper) - nonlinear_values)
+    s_sensitivity_lower.append(np.array(s_values_lower) - nonlinear_values)
+
+
+r_sensitivity_upper = np.array(r_sensitivity_upper).T
+print("\nIncreased each deficit penalty by 1:")
+print(r_sensitivity_upper)
+
+r_sensitivity_lower = np.array(r_sensitivity_lower).T
+print("\nDecreased each deficit penalty by 1:")
+print(r_sensitivity_lower)
+
+s_sensitivity_upper = np.array(s_sensitivity_upper).T
+print("\nIncreased each overflow penalty by 1:")
+print(s_sensitivity_upper)
+
+s_sensitivity_lower = np.array(s_sensitivity_lower).T
+print("\nDecreased each overflow penalty by 1:")
+print(s_sensitivity_lower)
