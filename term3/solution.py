@@ -125,7 +125,11 @@ class NonlinearTransportProblem(TransportProblem):
 
     @property
     def penalty_expr(self):
-        penalty_const = (self.overflow + self.shortage) / (self.upper_demand - self.lower_demand) / 2
+        penalty_const = (
+            (self.overflow + self.shortage)
+            / (self.upper_demand - self.lower_demand)
+            / 2
+        )
         expr0 = cp.multiply(self.shortage, self.demand - cp.sum(self.x, axis=1))
         expr1 = cp.square(cp.sum(self.x, axis=1) - self.lower_demand)
         return cp.sum(expr0 + cp.multiply(expr1, penalty_const))
@@ -154,7 +158,9 @@ class NonlinearTransportProblem(TransportProblem):
             f"penalty = {self.penalty_value:.2f}"
         )
         print(f"Optimal routes: \n{self.x.value.astype(int)}")
-        print(f"Optimal demand satisfaction: {np.sum(self.x.value, axis=1).astype(int)}\n")
+        print(
+            f"Optimal demand satisfaction: {np.sum(self.x.value, axis=1).astype(int)}\n"
+        )
 
 
 def solve(m, n, a, b, p, c, lb, ub, r, s, verbose: bool, to_print: bool):
@@ -183,14 +189,18 @@ ub = np.array([500, 1000, 400, 1000])
 r = np.array([8, 10, 19, 6]) * 3
 s = np.array([5, 6, 6, 3]) * 3
 
-a_list = np.array([[900, 700, 600, 0], [500, 1100, 600, 0], [500, 700, 1000, 0], [500, 700, 600, 400]])
+a_list = np.array(
+    [[900, 700, 600, 0], [500, 1100, 600, 0], [500, 700, 1000, 0], [500, 700, 600, 400]]
+)
 p_list = np.array([[12, 3, 6, 10], [9, 5, 6, 10], [9, 3, 11, 10], [9, 3, 6, 10]])
 
 
 linear_values = []
 nonlinear_values = []
 for a, p in zip(a_list, p_list):
-    linear_value, nonlinear_value = solve(m, n, a, b, p, c, lb, ub, r, s, verbose=True, to_print=True)
+    linear_value, nonlinear_value = solve(
+        m, n, a, b, p, c, lb, ub, r, s, verbose=True, to_print=True
+    )
     linear_values.append(linear_value)
     nonlinear_values.append(nonlinear_value)
 
@@ -203,7 +213,7 @@ sensitivity_max = []
 sensitivity_upper = []
 sensitivity_lower = []
 
-for idx, row in enumerate(np.eye(m*n).reshape(m*n, m, n)):
+for idx, row in enumerate(np.eye(m * n).reshape(m * n, m, n)):
     values_max = []
     values_upper = []
     values_lower = []
@@ -211,9 +221,15 @@ for idx, row in enumerate(np.eye(m*n).reshape(m*n, m, n)):
     for a, p in zip(a_list, p_list):
         c_row = c.copy()
         c_row[row == 1] = 10000
-        max_linear, max_nonlinear = solve(m, n, a, b, p, c_row, lb, ub, r, s, verbose=False, to_print=False)
-        upper_linear, upper_nonlinear = solve(m, n, a, b, p, c - row, lb, ub, r, s, verbose=False, to_print=False)
-        lower_linear, lower_nonlinear = solve(m, n, a, b, p, c + row, lb, ub, r, s, verbose=False, to_print=False)
+        max_linear, max_nonlinear = solve(
+            m, n, a, b, p, c_row, lb, ub, r, s, verbose=False, to_print=False
+        )
+        upper_linear, upper_nonlinear = solve(
+            m, n, a, b, p, c - row, lb, ub, r, s, verbose=False, to_print=False
+        )
+        lower_linear, lower_nonlinear = solve(
+            m, n, a, b, p, c + row, lb, ub, r, s, verbose=False, to_print=False
+        )
 
         values_max.append(max_nonlinear)
         values_upper.append(upper_nonlinear)
@@ -252,10 +268,18 @@ for idx, row in enumerate(np.eye(m)):
     s_values_lower = []
 
     for a, p in zip(a_list, p_list):
-        r_upper_linear, r_upper_nonlinear = solve(m, n, a, b, p, c, lb, ub, r + row, s, verbose=False, to_print=False)
-        r_lower_linear, r_lower_nonlinear = solve(m, n, a, b, p, c, lb, ub, r - row, s, verbose=False, to_print=False)
-        s_upper_linear, s_upper_nonlinear = solve(m, n, a, b, p, c, lb, ub, r, s + row, verbose=False, to_print=False)
-        s_lower_linear, s_lower_nonlinear = solve(m, n, a, b, p, c, lb, ub, r, s - row, verbose=False, to_print=False)
+        r_upper_linear, r_upper_nonlinear = solve(
+            m, n, a, b, p, c, lb, ub, r + row, s, verbose=False, to_print=False
+        )
+        r_lower_linear, r_lower_nonlinear = solve(
+            m, n, a, b, p, c, lb, ub, r - row, s, verbose=False, to_print=False
+        )
+        s_upper_linear, s_upper_nonlinear = solve(
+            m, n, a, b, p, c, lb, ub, r, s + row, verbose=False, to_print=False
+        )
+        s_lower_linear, s_lower_nonlinear = solve(
+            m, n, a, b, p, c, lb, ub, r, s - row, verbose=False, to_print=False
+        )
 
         r_values_upper.append(r_upper_nonlinear)
         r_values_lower.append(r_lower_nonlinear)
