@@ -1,0 +1,2 @@
+Number of square roots of odd numbers: 3
+Numbers: [1,25,9]
